@@ -16,7 +16,7 @@ class UserManager:
         if username is None:
             return None
 
-        row = self.db_manager.one(f"SELECT username, password FROM user WHERE username = '{username}'")
+        row = self.db_manager.one("SELECT username, password FROM user WHERE username = ?", params = (username,))
         
         try:
             username, password = row
@@ -40,4 +40,4 @@ class UserManager:
 
         password += self.pepper
         hash = bcrypt.using(rounds=self.rounds).hash(password)
-        self.db_manager.execute(f"INSERT INTO user (username, password) VALUES ('{username}', '{hash}')")
+        self.db_manager.execute("INSERT INTO user (username, password) VALUES (?, ?)", params = (username, hash))

@@ -19,16 +19,16 @@ class DBManager:
         sql_cursor.execute("CREATE TABLE notes (id INTEGER PRIMARY KEY, username VARCHAR(32), note VARCHAR(256))")
         self.db_connection.commit()
     
-    def execute(self, sql):
+    def execute(self, sql, params=()):
         self.connect()
         sql_cursor = self.db_connection.cursor()
-        sql_cursor.execute(sql)
+        sql_cursor.execute(sql, params)
         self.db_connection.commit()
 
-    def one(self, sql):
+    def one(self, sql, params=()):
         self.connect()
         sql_cursor = self.db_connection.cursor()
-        sql_cursor.execute(sql)
+        sql_cursor.execute(sql, params)
 
         try:
             result = sql_cursor.fetchone()
@@ -37,10 +37,10 @@ class DBManager:
 
         return result
 
-    def many(self, sql):
+    def many(self, sql, params=()):
         self.connect()
         sql_cursor = self.db_connection.cursor()
-        sql_cursor.execute(sql)
+        sql_cursor.execute(sql, params)
         
         try:
             result = sql_cursor.fetchall()

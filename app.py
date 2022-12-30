@@ -83,7 +83,7 @@ def welcom():
         print(current_user.id)
         username = current_user.id
 
-        notes = db_manager.many(f"SELECT id FROM notes WHERE username == '{username}'")
+        notes = db_manager.many("SELECT id FROM notes WHERE username = ?", params = (username,))
 
         return render_template("welcom.html", username=username, notes=notes)
 
@@ -94,7 +94,7 @@ def render():
     md = request.form.get("markdown","")
     rendered = markdown.markdown(md)
     username = current_user.id
-    db_manager.execute(f"INSERT INTO notes (username, note) VALUES ('{username}', '{rendered}')")
+    db_manager.execute("INSERT INTO notes (username, note) VALUES (?, ?)", params = (username, rendered))
     return render_template("markdown.html", rendered=rendered)
 
 # Previous note panel
@@ -103,7 +103,7 @@ def render():
 def render_old(rendered_id):
 
     try:
-        username, rendered = db_manager.one(f"SELECT username, note FROM notes WHERE id == {rendered_id}")
+        username, rendered = db_manager.one(f"SELECT username, note FROM notes WHERE id = ?", params = (rendered_id,))
         if username != current_user.id:
             return "Access to note forbidden", 403
 
