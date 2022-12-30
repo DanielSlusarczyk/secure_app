@@ -1,7 +1,4 @@
 import os, sqlite3
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class DBManager:
     def __init__(self):

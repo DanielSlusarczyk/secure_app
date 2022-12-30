@@ -1,6 +1,7 @@
 from source.dbManager import DBManager
 from flask_login import UserMixin
-from passlib.hash import sha256_crypt
+from passlib.hash import bcrypt
+import os
 
 class User(UserMixin):
     pass
@@ -8,8 +9,10 @@ class User(UserMixin):
 class UserManager:
     def __init__(self):
         self.db_manager = DBManager()
+        self.pepper = os.getenv('PASSWORD_PEPPER')
+        self.rounds = os.getenv('PASSWORD_ROUNDS')
 
-    def validate(self, username):
+    def find(self, username):
         if username is None:
             return None
 
@@ -26,6 +29,15 @@ class UserManager:
 
         return user
 
+    def validate(self, password, user):
+        if user is None:
+            return False
+
+        password += self.pepper
+        return bcrypt.verify(password, user.password)
+
     def add(self, username, password):
 
-        self.db_manager.execute(f"INSERT INTO user (username, password) VALUES ('{username}', '{sha256_crypt.hash(password)}')")
+        password += self.pepper
+        hash = bcrypt.using(rounds=self.rounds).hash(password)
+        self.db_manager.execute(f"INSERT INTO user (username, password) VALUES ('{username}', '{hash}')")

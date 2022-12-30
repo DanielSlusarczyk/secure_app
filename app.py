@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from collections import deque
-from passlib.hash import sha256_crypt
 from dotenv import load_dotenv
 from source.userManager import UserManager
 from source.dbManager import DBManager
@@ -19,7 +18,7 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 @login_manager.user_loader
 def user_loader(username):
-    return user_manager.validate(username)
+    return user_manager.find(username)
 
 
 @login_manager.request_loader
@@ -64,9 +63,7 @@ def login():
             password = request.form.get("password")
 
             user = user_loader(username)
-            if user is None:
-                return "Nieprawidłowy login lub hasło", 401
-            if sha256_crypt.verify(password, user.password):
+            if user_manager.validate(password, user):
                 login_user(user)
                 return redirect('/welcom')
         
