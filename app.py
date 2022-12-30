@@ -5,6 +5,7 @@ from passlib.hash import sha256_crypt
 from dotenv import load_dotenv
 from source.userManager import UserManager
 from source.dbManager import DBManager
+from source.models import RegisterForm, LoginForm
 
 import markdown, os
 
@@ -27,41 +28,49 @@ def request_loader(request):
     user = user_loader(username)
     return user
 
-
 recent_users = deque(maxlen=3)
 
 # Registration
-@app.route("/user/register", methods=['GET', 'POST'])
+@app.route("/register", methods=['GET', 'POST'])
 def register():
+    form = RegisterForm()
+
     if request.method == 'GET':
-        return render_template("register.html")
+        return render_template("register.html", form = form)
+
     if request.method == 'POST':
+        if form.validate_on_submit():
 
-        username = request.form.get('username')
-        password = request.form.get('password')
+            username = request.form.get('username')
+            password = request.form.get('password')
 
-        user_manager.add(username, password)
+            user_manager.add(username, password)
         
-        return redirect('/login')
+            return redirect('/login')
+
+    return redirect('/register')
 
 # Login
 @app.route("/login", methods=["GET","POST"])
 def login():
+    form = LoginForm()
+
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("login.html", form = form)
+
     if request.method == "POST":
+        if form.validate_on_submit():
+            username = request.form.get("username")
+            password = request.form.get("password")
 
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        user = user_loader(username)
-        if user is None:
-            return "Nieprawidłowy login lub hasło", 401
-        if sha256_crypt.verify(password, user.password):
-            login_user(user)
-            return redirect('/welcom')
-        else:
-            return "Nieprawidłowy login lub hasło", 401
+            user = user_loader(username)
+            if user is None:
+                return "Nieprawidłowy login lub hasło", 401
+            if sha256_crypt.verify(password, user.password):
+                login_user(user)
+                return redirect('/welcom')
+        
+        return "Nieprawidłowy login lub hasło", 401
 
 # Logout
 @app.route("/logout")
