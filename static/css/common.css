@@ -35,6 +35,24 @@ input {
   text-align: center;
 }
 
+input[type=text]:focus {
+  border-color:#333;
+}
+
+input[type=password]:focus {
+  border-color:#333;
+}
+
+input[type=submit] {
+  background-color: #F07B3F;
+  border-radius: 10px;
+  max-width: 20em;
+}
+
+input[type=submit]:hover {
+  font-weight: bold;
+}
+
 a,
 a:visited,
 a:hover,

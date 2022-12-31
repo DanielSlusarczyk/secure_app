@@ -4,7 +4,7 @@ from wtforms.validators import InputRequired, Length, ValidationError
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[
-                           InputRequired(), Length(min=2, max=20)], render_kw={"placeholder": "Username"})
+                           InputRequired(), Length(min=2, max=20)], render_kw={"placeholder": "Username", "autofocus": True})
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
@@ -13,7 +13,7 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    username = StringField(validators=[InputRequired()], render_kw={"placeholder": "Username"})
+    username = StringField(validators=[InputRequired()], render_kw={"placeholder": "Username", "autofocus": True})
 
     password = PasswordField(validators=[InputRequired()], render_kw={"placeholder": "Password"})
 
