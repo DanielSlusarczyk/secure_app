@@ -1,0 +1,22 @@
+#logout {
+    font-size: 1.2em;
+    width: 25px;
+    height: 35px;
+    margin-right: 15%;
+    background-color: #C9D6DF;
+}
+
+#nav {
+    margin: auto;
+    overflow: hidden;
+}
+
+#first {
+    width: 50%;
+    float:left;
+}
+
+#second {
+    width: 50%;
+    overflow: hidden;
+}

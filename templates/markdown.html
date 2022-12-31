@@ -1,14 +1,42 @@
 <html>
-  <head>
-    <title>Flask Intro - login page</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-  </head>
+
+<head>
+  <title>Note</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/markdown.css') }}">
+</head>
+
 <body>
-<h1> Your rendered Markdown: </h1>
-{{ rendered }}
-<br>
-<form action={{ url_for('welcom') }}>
-  <input type="submit" value="Go back" />
-</form>
+  <div class="right">
+
+
+  </div>
+  <div class="container">
+
+
+    <div class="center">
+      <div id="nav">
+        <div id="first">
+          <form action={{ url_for('welcom') }}>
+            <input id="logout" type="submit" value="Back" />
+          </form>
+        </div>
+        <div id="second">
+          <form action={{ url_for('logout') }}>
+            <input id="logout" type="submit" value="Log out" />
+          </form>
+        </div>
+      </div>
+      <div class="wrapper">
+        <h1>Notes</h1>
+        <h2>Note: - title </h2>
+      </div>
+
+      <div class="wrapper">
+        {{ rendered }}
+      </div>
+    </div>
+  </div>
 </body>
+
 </html>
