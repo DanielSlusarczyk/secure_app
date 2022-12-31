@@ -44,11 +44,11 @@ input {
 }
 
 input[type=text]:focus {
-  border-color:#333;
+  border-color: #333;
 }
 
 input[type=password]:focus {
-  border-color:#333;
+  border-color: #333;
 }
 
 input[type=submit] {

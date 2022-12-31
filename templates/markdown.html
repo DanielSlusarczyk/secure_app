@@ -2,7 +2,6 @@
 
 <head>
   <title>Note</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/markdown.css') }}">
 </head>
 
@@ -12,8 +11,6 @@
 
   </div>
   <div class="container">
-
-
     <div class="center">
       <div id="nav">
         <div id="first">
@@ -32,8 +29,8 @@
         <h2>Note: - title </h2>
       </div>
 
-      <div class="wrapper">
-        {{ rendered }}
+      <div id="field">
+        {{ rendered |safe }}
       </div>
     </div>
   </div>
