@@ -9,7 +9,7 @@ class RegisterForm(FlaskForm):
     password = PasswordField(validators=[
                              InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
 
-    submit = SubmitField('Register')
+    submit = SubmitField('Accept')
 
 
 class LoginForm(FlaskForm):
@@ -17,4 +17,4 @@ class LoginForm(FlaskForm):
 
     password = PasswordField(validators=[InputRequired()], render_kw={"placeholder": "Password"})
 
-    submit = SubmitField('Login')
+    submit = SubmitField('Accept')

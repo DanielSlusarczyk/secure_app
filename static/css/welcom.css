@@ -1,0 +1,45 @@
+textarea {
+    margin-top: 10px;
+    opacity: 0.8;
+    font-size: 2em;
+    width: 70%;
+    max-width: 40em;
+    height: 10em;
+    max-height: 15em;
+}
+
+table {
+    width: 70%;
+    text-align: center;
+    margin-top: 2em;
+    margin: auto;
+}
+
+td {
+    height: 40px;
+}
+
+.single_note {
+    font-size: 1.2em;
+}
+
+.single_note:hover {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#add {
+    font-size: 1.2em;
+    width: 25px;
+    height: 35px;
+    margin-right: 15%;
+
+}
+
+#logout {
+    font-size: 1.2em;
+    width: 25px;
+    height: 35px;
+    margin-right: 15%;
+    background-color: #C9D6DF;
+}

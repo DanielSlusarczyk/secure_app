@@ -12,11 +12,11 @@ class DBManager:
         self.connect()
         sql_cursor = self.db_connection.cursor()
 
-        sql_cursor.execute("DROP TABLE IF EXISTS user")
-        sql_cursor.execute("DROP TABLE IF EXISTS notes")
+        #sql_cursor.execute("DROP TABLE IF EXISTS user")
+        #sql_cursor.execute("DROP TABLE IF EXISTS notes")
         
-        sql_cursor.execute("CREATE TABLE user (username VARCHAR(32), password VARCHAR(128))")
-        sql_cursor.execute("CREATE TABLE notes (id INTEGER PRIMARY KEY, username VARCHAR(32), note VARCHAR(256))")
+        #sql_cursor.execute("CREATE TABLE user (username VARCHAR(32), password VARCHAR(128))")
+        #sql_cursor.execute("CREATE TABLE notes (id INTEGER PRIMARY KEY, username VARCHAR(32), note VARCHAR(256))")
         self.db_connection.commit()
     
     def execute(self, sql, params=()):

@@ -1,31 +1,66 @@
 <html>
-  <head>
-    <title>Flask Intro - login page</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-  </head>
+
+<head>
+  <title>Notes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/welcom.css') }}">
+</head>
+
 <body>
-<h1>Hello {{ username }}!</h1>
+  <div class="container">
+    <div class="right">
+      <form action={{ url_for('logout') }}>
+        <input id="logout" type="submit" value="Log out" />
+      </form>
+    </div>
 
-<form action={{ url_for('render') }} method="post">
-  <label for="markdown">Input some markdown:</label><br>
-  <textarea id="markdown" name="markdown" rows="20" cols="100"></textarea>
-  <br>
-  <input type="submit" value="Submit">
-</form>
+    <div class="center">
+      <div class="wrapper">
+        <h1>Notes</h1>
+        <h2>Welcom <strong>{{ username }}!</strong></h2>
+      </div>
 
-{% if notes|length > 0 %}
-<h1> Your notes: </h1>
-<ul>
-{% for note in notes %}
-  <li><a href="{{ url_for('render') }}/{{note.0}}"> Note {{ loop.index }}</a></li>
-{% endfor %}
-</ul>
+      <div class="wrapper">
+        <form action={{ url_for('render') }} method="POST">
+          <label for="markdown">Input some markdown:</label><br>
+          <textarea id="markdown" name="markdown" rows="20" cols="100"></textarea>
+          <br>
+          <div style="text-align:right">
+            <input id="add" type="submit" value="Save">
+          </div>
+        </form>
+      </div>
 
-{% endif %}
 
+      {% if notes|length > 0 %}
+      <div class="left" style="margin-left: 15%;">
+        <h2> Your notes: </h2>
+      </div>
+      <div class="wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Note</th>
+              <th>Token</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for note in notes %}
 
-<form action={{ url_for('logout') }}>
-  <input type="submit" value="Log out" />
-</form>
+            <tr>
+              <td>{{note.0}}</td>
+              <td><a class="single_note" href="{{ url_for('render') }}/{{note.0}}"> Note {{ loop.index }}</a></td>
+              <td>.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
 </body>
+
 </html>
