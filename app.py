@@ -29,6 +29,10 @@ def request_loader(request):
 
 recent_users = deque(maxlen=3)
 
+@app.route("/")
+def main():
+    return render_template("main.html")
+
 # Registration
 @app.route("/register", methods=['GET', 'POST'])
 def register():

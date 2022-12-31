@@ -1,0 +1,12 @@
+h3 {
+    margin-top: 3em;
+    font-size: 1em;
+    color: #C9D6DF;
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+    font-size: 1.5em;
+}
