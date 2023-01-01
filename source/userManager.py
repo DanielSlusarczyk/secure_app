@@ -23,7 +23,7 @@ class UserManager:
         if username is None:
             return None
 
-        row = self.db_manager.one("SELECT id, username, password FROM user WHERE username = ?", params = (username,))
+        row = self.db_manager.one("SELECT id, username, password FROM users WHERE username = ?", params = (username,))
         
         try:
             id, username, password = row
@@ -45,7 +45,7 @@ class UserManager:
 
     def add(self, username, password):
 
-        already_exists = self.db_manager.one("SELECT 1 FROM user WHERE username = ?", params = (username,))
+        already_exists = self.db_manager.one("SELECT 1 FROM users WHERE username = ?", params = (username,))
 
         if already_exists:
             return "Username already exists!"
@@ -55,7 +55,7 @@ class UserManager:
 
         password += self.pepper
         hash = bcrypt.using(rounds=self.rounds).hash(password)
-        self.db_manager.execute("INSERT INTO user (username, password) VALUES (?, ?)", params = (username, hash))
+        self.db_manager.execute("INSERT INTO users (username, password) VALUES (?, ?)", params = (username, hash))
 
     def validate_strength(self, password):
 
