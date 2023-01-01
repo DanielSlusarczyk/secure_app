@@ -6,14 +6,14 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from source.userManager import UserManager
 from source.dbManager import DBManager
+from source.noteManager import NoteManager
 from source.models import RegisterForm, LoginForm
 
-import markdown, os
+import os
 
 load_dotenv()
 app = Flask(__name__)
-db_manager = DBManager()
-user_manager = UserManager()
+db_manager, user_manager, note_manager = DBManager(), UserManager(), NoteManager()
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.secret_key = os.getenv('SECRET_KEY')
@@ -97,8 +97,7 @@ def logout():
 def welcom():
     if request.method == 'GET':
         username = current_user.id
-
-        notes = db_manager.many('SELECT id FROM notes WHERE owner = ?', params = (username,))
+        notes = note_manager.find_by_author(username)
 
         return render_template('welcom.html', username=username, notes=notes)
 
@@ -108,10 +107,7 @@ def welcom():
 @app.route('/render', methods=['POST'])
 @login_required
 def render():
-    md = request.form.get('markdown','')
-    rendered = markdown.markdown(md)
-    username = current_user.id
-    print(db_manager.insert('INSERT INTO notes (owner, note) VALUES (?, ?)', params = (username, rendered)))
+    rendered = note_manager.add(current_user.id, request.form.get('markdown',''))
     return render_template('markdown.html', rendered=rendered)
 
 # Previous note panel
@@ -119,7 +115,7 @@ def render():
 @login_required
 def render_old(rendered_id):
     try:
-        username, rendered = db_manager.one(f'SELECT owner, note FROM notes WHERE id = ?', params = (rendered_id,))
+        username, rendered = note_manager.find_by_id(rendered_id)
         if username != current_user.id:
             return '', 404
 
