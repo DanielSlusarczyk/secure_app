@@ -89,10 +89,10 @@ def logout():
 @login_required
 def welcom():
     if request.method == 'GET':
-        print(current_user.id)
+        print(current_user.db_id)
         username = current_user.id
 
-        notes = db_manager.many('SELECT id FROM notes WHERE username = ?', params = (username,))
+        notes = db_manager.many('SELECT id FROM notes WHERE owner = ?', params = (username,))
 
         return render_template('welcom.html', username=username, notes=notes)
 
@@ -103,7 +103,7 @@ def render():
     md = request.form.get('markdown','')
     rendered = markdown.markdown(md)
     username = current_user.id
-    db_manager.execute('INSERT INTO notes (username, note) VALUES (?, ?)', params = (username, rendered))
+    print(db_manager.insert('INSERT INTO notes (owner, note) VALUES (?, ?)', params = (username, rendered)))
     return render_template('markdown.html', rendered=rendered)
 
 # Previous note panel

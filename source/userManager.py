@@ -16,17 +16,17 @@ class UserManager:
         if username is None:
             return None
 
-        row = self.db_manager.one("SELECT username, password FROM user WHERE username = ?", params = (username,))
+        row = self.db_manager.one("SELECT id, username, password FROM user WHERE username = ?", params = (username,))
         
         try:
-            username, password = row
+            id, username, password = row
         except:
             return None
 
         user = User()
         user.id = username
+        user.db_id = id
         user.password = password
-
         return user
 
     def validate(self, password, user):
