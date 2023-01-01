@@ -12,8 +12,12 @@ class UserManager:
         self.db_manager = DBManager()
         self.pepper = os.getenv('PASSWORD_PEPPER')
         self.rounds = os.getenv('PASSWORD_ROUNDS')
-        self.entrophy = os.getenv('PASSWORD_ENTROPHY')
-        self.password_policy = PasswordPolicy.from_names(length = 8, uppercase = 2, numbers = 2)
+        self.entrophy = int(os.getenv('PASSWORD_ENTROPHY'))
+
+        self.password_policy = PasswordPolicy.from_names(
+            length = int(os.getenv('PASSWORD_LENGTH')),
+            uppercase = int(os.getenv('PASSWORD_UPPERS')),
+            numbers = int(os.getenv('PASSWORD_DIGITS')))
 
     def find(self, username):
         if username is None:

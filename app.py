@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from collections import deque
 from dotenv import load_dotenv
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.models import RegisterForm, LoginForm
@@ -15,6 +17,7 @@ user_manager = UserManager()
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.secret_key = os.getenv('SECRET_KEY')
+limiter = Limiter(get_remote_address, app = app, default_limits = ["70 per minute"],)
 
 @login_manager.user_loader
 def user_loader(username):
@@ -35,6 +38,8 @@ def main():
 
 # Registration
 @app.route('/register', methods=['GET', 'POST'])
+@limiter.limit("50/day", methods=['POST'])
+@limiter.limit("10/minute" , methods=['POST'])
 def register():
     form = RegisterForm()
 
@@ -58,6 +63,8 @@ def register():
 
 # Login
 @app.route('/login', methods=['GET','POST'])
+@limiter.limit("50/day", methods=['POST'])
+@limiter.limit("5/minute", methods=['POST'])
 def login():
     form = LoginForm()
 
