@@ -1,0 +1,22 @@
+<html>
+
+<head>
+    <title>Note</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <div class="wrapper">
+                <h1>Upps!</h1>
+                <h2>Something went wrong :(</h2>
+              </div>
+            {% if error %}
+            <p class="error"><strong>Information: </strong> {{ error }}</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

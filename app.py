@@ -17,7 +17,7 @@ user_manager = UserManager()
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.secret_key = os.getenv('SECRET_KEY')
-limiter = Limiter(get_remote_address, app = app, default_limits = ["70 per minute"],)
+limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')])
 
 @login_manager.user_loader
 def user_loader(username):
@@ -96,7 +96,6 @@ def logout():
 @login_required
 def welcom():
     if request.method == 'GET':
-        print(current_user.db_id)
         username = current_user.id
 
         notes = db_manager.many('SELECT id FROM notes WHERE owner = ?', params = (username,))
@@ -127,6 +126,9 @@ def render_old(rendered_id):
     except:
         return 'Note not found', 404
 
+@app.errorhandler(429)
+def limit_handler(e):
+    return render_template('error.html', error='Too many request... slow down!')
 
 if __name__ == '__main__':
 
