@@ -34,6 +34,10 @@ h3 {
   text-align: left;
 }
 
+.space {
+  margin-top: 2em;
+}
+
 input {
   width: 50%;
   max-width: 40em;

@@ -11,9 +11,23 @@
             <div class="wrapper">
                 <h1>Upps!</h1>
                 <h2>Something went wrong :(</h2>
-              </div>
+            </div>
+
             {% if error %}
-            <p class="error"><strong>Information: </strong> {{ error }}</p>
+            <p class="error space"><strong>Info: </strong> {{ error }}</p>
+            {% endif %}
+
+            {% if return_btn %}
+            <div class="wrapper space">
+                <a class="first after" href="/login">Login</a>
+            </div>
+            {% endif %}
+
+
+            {% if return_btn %}
+            <div class="wrapper space">
+                <a class="first after" href="/">Go home</a>
+            </div>
             {% endif %}
         </div>
     </div>

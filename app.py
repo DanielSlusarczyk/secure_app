@@ -102,6 +102,8 @@ def welcom():
 
         return render_template('welcom.html', username=username, notes=notes)
 
+    return redirect('/login')
+
 # Rendered note panel
 @app.route('/render', methods=['POST'])
 @login_required
@@ -116,15 +118,22 @@ def render():
 @app.route('/render/<rendered_id>')
 @login_required
 def render_old(rendered_id):
-
     try:
         username, rendered = db_manager.one(f'SELECT owner, note FROM notes WHERE id = ?', params = (rendered_id,))
         if username != current_user.id:
-            return 'Access to note forbidden', 403
+            return '', 404
 
         return render_template('markdown.html', rendered=rendered)
     except:
-        return 'Note not found', 404
+        return '', 404
+
+@app.errorhandler(401)
+def limit_handler(e):
+    return render_template('error.html', error='Authorization required for this page...', return_btn=True, login_btn=True)
+
+@app.errorhandler(404)
+def limit_handler(e):
+    return render_template('error.html', error='Page not found...', return_btn=True)
 
 @app.errorhandler(429)
 def limit_handler(e):
