@@ -112,7 +112,7 @@ def render():
 def render_old(rendered_id):
 
     try:
-        username, rendered = db_manager.one(f'SELECT username, note FROM notes WHERE id = ?', params = (rendered_id,))
+        username, rendered = db_manager.one(f'SELECT owner, note FROM notes WHERE id = ?', params = (rendered_id,))
         if username != current_user.id:
             return 'Access to note forbidden', 403
 
