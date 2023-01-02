@@ -54,4 +54,9 @@ input[type=submit]:hover {
     margin: auto;
     text-align: left;
     background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+#space {
+    padding: 4%;
 }
