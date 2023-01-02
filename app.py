@@ -107,8 +107,12 @@ def welcom():
 @app.route('/render', methods=['POST'])
 @login_required
 def render():
-    rendered = note_manager.add(current_user.id, request.form.get('markdown',''))
-    return render_template('markdown.html', rendered=rendered)
+    rendered, wasSafe = note_manager.add(current_user.id, request.form.get('markdown',''))
+    
+    if wasSafe:
+        return render_template('markdown.html', rendered=rendered)
+    else:
+        return render_template('markdown.html', rendered=rendered, error='Some information has been transformed due to safety policy!')
 
 # Previous note panel
 @app.route('/render/<rendered_id>')

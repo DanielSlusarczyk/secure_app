@@ -24,6 +24,11 @@
         <h1>Notes</h1>
         <h2>Note: - title </h2>
       </div>
+      <div class="wrapper">
+        {% if error %}
+        <p class="error"><strong>Error: </strong> {{ error }}</p>
+        {% endif %}
+      </div>
 
       <div id="field">
         {{ rendered |safe }}
