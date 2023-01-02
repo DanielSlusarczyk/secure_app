@@ -98,6 +98,7 @@ def welcom():
     if request.method == 'GET':
         username = current_user.id
         notes = note_manager.find_by_author(username)
+        print(notes)
 
         return render_template('welcom.html', username=username, notes=notes)
 

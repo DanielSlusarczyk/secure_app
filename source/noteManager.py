@@ -26,5 +26,5 @@ class NoteManager:
             return None, None
 
     def find_by_author(self, author):
-        notes = self.db_manager.many('SELECT id FROM notes WHERE owner = ?', params = (author,))
+        notes = self.db_manager.many('SELECT id, STRFTIME("%d/%m/%Y, %H:%M", addDate) FROM notes WHERE owner = ?', params = (author,))
         return notes

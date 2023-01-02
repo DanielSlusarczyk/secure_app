@@ -21,14 +21,18 @@
       </div>
 
       <div class="wrapper">
+
         <form action={{ url_for('render') }} method="POST">
           <label for="markdown">Input some markdown:</label><br>
-          <textarea id="markdown" name="markdown" rows="20" cols="100"></textarea>
+          <div id="space">
+            <textarea id="markdown" name="markdown" rows="20" cols="100"></textarea>
+          </div>
           <br>
           <div style="text-align:right">
             <input id="add" type="submit" value="Save">
           </div>
         </form>
+
       </div>
 
 
@@ -42,7 +46,7 @@
             <tr>
               <th>Title</th>
               <th>Note</th>
-              <th>Token</th>
+              <th>Date</th>
             </tr>
           </thead>
           <tbody>
@@ -51,7 +55,7 @@
             <tr>
               <td>{{note.0}}</td>
               <td><a class="single_note" href="{{ url_for('render') }}/{{note.0}}"> Note {{ loop.index }}</a></td>
-              <td>.</td>
+              <td>{{note.1}}</td>
             </tr>
             {% endfor %}
           </tbody>

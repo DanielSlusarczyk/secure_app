@@ -2,10 +2,11 @@ textarea {
     margin-top: 10px;
     opacity: 0.8;
     font-size: 2em;
-    width: 70%;
-    max-width: 40em;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
     height: 10em;
-    max-height: 15em;
+    border: none;
 }
 
 table {
@@ -15,8 +16,13 @@ table {
     margin: auto;
 }
 
+th {
+    font-size: 1.5em;
+}
+
 td {
     height: 40px;
+    width: 10%;
 }
 
 .single_note {
@@ -42,4 +48,13 @@ td {
     height: 35px;
     margin-right: 15%;
     background-color: #C9D6DF;
+}
+
+#space {
+    margin: auto;
+    width: 70%;
+    background-color: white;
+    opacity: 0.8;
+    padding: 10px 15px 10px 15px;
+    border-radius: 10px;
 }
