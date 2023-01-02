@@ -11,11 +11,11 @@ class NoteManager:
         note = markdown.markdown(text)
 
         sanitized_note = bleach.clean(note, tags=self.allowed_tags, protocols=self.allowed_protocols)
-        requiredSanitization = (note != sanitized_note)
+        is_safe = (note == sanitized_note)
 
         self.db_manager.insert('INSERT INTO notes (owner, note) VALUES (?, ?)', params = (author, sanitized_note))
 
-        return sanitized_note, requiredSanitization
+        return sanitized_note, is_safe
     
     def find_by_id(self, id):
         try:

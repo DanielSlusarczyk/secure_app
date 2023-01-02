@@ -98,7 +98,6 @@ def welcom():
     if request.method == 'GET':
         username = current_user.id
         notes = note_manager.find_by_author(username)
-        print(notes)
 
         return render_template('welcom.html', username=username, notes=notes)
 
@@ -108,9 +107,9 @@ def welcom():
 @app.route('/render', methods=['POST'])
 @login_required
 def render():
-    rendered, wasSafe = note_manager.add(current_user.id, request.form.get('markdown',''))
+    rendered, is_safe = note_manager.add(current_user.id, request.form.get('markdown',''))
     
-    if wasSafe:
+    if is_safe:
         return render_template('markdown.html', rendered=rendered)
     else:
         return render_template('markdown.html', rendered=rendered, error='Some information has been transformed due to safety policy!')
