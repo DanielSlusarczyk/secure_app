@@ -35,6 +35,19 @@
           {{ rendered |safe }}
         </div>
       </div>
+      <form action={{ url_for('save') }} method="POST">
+        <div style="text-align:right">
+          <div>
+            <input type="checkbox" id="public" name="public" checked>
+            <label for="public">Public</label>
+          </div>
+          <div>
+            <input type="checkbox" id="encrypt" name="encrypt" checked>
+            <label for="encrypt">Encrypt</label>
+          </div>
+          <input id="add" type="submit" value="Save">
+        </div>
+      </form>
     </div>
   </div>
 </body>

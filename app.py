@@ -107,25 +107,45 @@ def welcom():
 @app.route('/render', methods=['POST'])
 @login_required
 def render():
-    rendered, is_safe = note_manager.add(current_user.id, request.form.get('markdown',''))
+    rendered, is_safe = note_manager.render(current_user.id, request.form.get('markdown',''))
     
     if is_safe:
         return render_template('markdown.html', rendered=rendered)
     else:
         return render_template('markdown.html', rendered=rendered, error='Some information has been transformed due to safety policy!')
 
+@app.route('/save', methods=['POST'])
+@login_required
+def save():
+    username = current_user.id
+    public = False
+    encrypt = True
+
+    if request.form.get('public'):
+        public = True
+    if not request.form.get('encrypt'):
+        encrypt = False
+
+    note_manager.save(username, encrypt, public, "haslo")
+
+    return redirect('/welcom')
+
 # Previous note panel
 @app.route('/render/<rendered_id>')
 @login_required
 def render_old(rendered_id):
-    try:
-        username, rendered = note_manager.find_by_id(rendered_id)
-        if username != current_user.id:
-            return '', 404
 
-        return render_template('markdown.html', rendered=rendered)
-    except:
-        return '', 404
+    if note_manager.is_author(rendered_id, current_user.id):
+
+        if note_manager.is_encrypted(rendered_id):
+            rendered = note_manager.find_by_id_encrypted(rendered_id, "haslo")
+        else:
+            rendered = note_manager.find_by_id(rendered_id)
+
+        if rendered is not None:
+            return render_template('markdown.html', rendered=rendered)
+    
+    return '', 404
 
 @app.errorhandler(401)
 def limit_handler(e):
@@ -138,6 +158,10 @@ def limit_handler(e):
 @app.errorhandler(429)
 def limit_handler(e):
     return render_template('error.html', error='Too many request... slow down!')
+
+@app.errorhandler(500)
+def limit_handler(e):
+    return render_template('error.html')
 
 if __name__ == '__main__':
 
