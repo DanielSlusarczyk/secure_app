@@ -1,0 +1,56 @@
+<html>
+
+<head>
+  <title>Notes - Sign in</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/password.css') }}">
+</head>
+
+<body>
+  <div class="container">
+    <div class="center">
+
+
+      <div class="wrapper">
+        {% if state %}
+
+        <div class="wrapper">
+          <h1>Notes</h1>
+          <h2>Determine your secret key for this note</h2>
+        </div>
+        <form action={{ url_for('lock') }} method="POST">
+
+          {{ form.hidden_tag() }}
+          <div>{{ form.key }}</div>
+          <div>{{ form.submit }}</div>
+        </form>
+
+        {% else %}
+
+        <div class="wrapper">
+          <h1>Notes</h1>
+          <h2>Pass the specific key for this note</h2>
+        </div>
+        <form action={{ url_for('unlock', rendered_id = rendered_id) }} method="POST">
+
+          {{ form.hidden_tag() }}
+          <div>{{ form.key }}</div>
+          <div>{{ form.submit }}</div>
+        </form>
+
+        {% endif %}
+
+        <div class="wrapper">
+          {% if error %}
+          <p class="error"><strong>Error: </strong> {{ error }}</p>
+          {% endif %}
+        </div>
+
+
+      </div>
+
+    </div>
+  </div>
+</body>
+
+</html>

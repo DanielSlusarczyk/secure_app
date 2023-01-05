@@ -26,7 +26,6 @@ input[type=submit]:hover {
     font-size: 1.2em;
     width: 25px;
     height: 35px;
-    margin-right: 15%;
     background-color: #C9D6DF;
 }
 
@@ -35,18 +34,22 @@ input[type=submit]:hover {
 }
 
 #nav {
-    margin: auto;
+    margin-top: 1%;
     overflow: hidden;
 }
 
 #first {
-    width: 50%;
+    text-align: left;
+    width: 35%;
     float: left;
+    margin-left: 15%;
 }
 
 #second {
-    width: 50%;
+    text-align: right;
+    width: 35%;
     overflow: hidden;
+    margin-right: 15%;
 }
 
 #field {

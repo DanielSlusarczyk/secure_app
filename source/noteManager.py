@@ -21,7 +21,27 @@ class NoteManager:
 
         return sanitized_note, is_safe
     
-    def save(self, user, encrypt, public, password):
+    def save(self, user, public):
+        saved = False
+        try:
+            md = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (user,))
+        except:
+            md = None
+
+        if md is not None:
+            md = markdown.markdown(md[0])
+
+            note = bleach.clean(md, tags=self.allowed_tags, protocols=self.allowed_protocols)
+            
+            isPublic = 1 if public else 0
+
+            self.db_manager.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params = (user, note, 0, isPublic))
+            self.db_manager.execute('DELETE FROM drafts WHERE author = ?', params = (user,))
+            saved = True
+
+        return saved
+
+    def lock(self, user, password):
         saved = False
         try:
             md = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (user,))
@@ -34,13 +54,9 @@ class NoteManager:
 
             note = bleach.clean(md, tags=self.allowed_tags, protocols=self.allowed_protocols)
             
-            if encrypt:
-                note, salt, nonce, tag = self.encrypt(note, password)
+            note, salt, nonce, tag = self.encrypt(note, password)
 
-            isEncrypted = 1 if encrypt else 0
-            isPublic = 1 if public else 0
-
-            self.db_manager.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic, tag, salt, nonce) VALUES (?, ?, ?, ?, ?, ?, ?)', params = (user, note, isEncrypted, isPublic, tag, salt, nonce))
+            self.db_manager.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic, tag, salt, nonce) VALUES (?, ?, ?, ?, ?, ?, ?)', params = (user, note, 1, 0, tag, salt, nonce))
             self.db_manager.execute('DELETE FROM drafts WHERE author = ?', params = (user,))
             saved = True
 

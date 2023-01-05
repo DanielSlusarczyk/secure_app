@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from collections import deque
 from dotenv import load_dotenv
@@ -7,7 +7,7 @@ from flask_limiter.util import get_remote_address
 from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
-from source.models import RegisterForm, LoginForm
+from source.models import RegisterForm, LoginForm, KeyForm
 
 import os
 
@@ -103,6 +103,45 @@ def welcom():
 
     return redirect('/login')
 
+# Obtain key for encrypt note
+@app.route('/lock', methods=['GET', 'POST'])
+@login_required
+def lock():
+    form = KeyForm()
+    username = current_user.id
+
+    if request.method == 'GET':
+        return render_template('key.html', state = True, form = form)
+
+    if request.method == 'POST':
+        key = request.form.get('key')
+
+        note_manager.lock(username, key)
+
+    return redirect('/welcom')
+
+# Obtain key for decrypt note
+@app.route('/unlock/<rendered_id>', methods=['GET', 'POST'])
+@login_required
+def unlock(rendered_id):
+    form = KeyForm()
+    
+    if note_manager.is_author(rendered_id, current_user.id):
+        if request.method == 'GET':
+            return render_template('key.html', form = form, rendered_id = rendered_id)
+
+        if request.method == 'POST':
+            key = request.form.get('key')
+
+            rendered = note_manager.find_by_id_encrypted(rendered_id, key)
+
+            if rendered is not None:
+                return render_template('markdown.html', rendered=rendered)
+            else:
+                return render_template('key.html', form = form, error="Key is invalid!")
+
+    return '', 404
+
 # Rendered note panel
 @app.route('/render', methods=['POST'])
 @login_required
@@ -119,26 +158,29 @@ def render():
 def save():
     username = current_user.id
     public = False
-    encrypt = True
 
     if request.form.get('public'):
         public = True
-    if not request.form.get('encrypt'):
-        encrypt = False
+        
+    if request.form.get('encrypt'):
+        return redirect('/lock')
 
-    note_manager.save(username, encrypt, public, "haslo")
-
+    else:
+        note_manager.save(username, public)
+    
     return redirect('/welcom')
+    
 
 # Previous note panel
-@app.route('/render/<rendered_id>')
+@app.route('/render/<rendered_id>', methods=['GET'])
 @login_required
 def render_old(rendered_id):
 
     if note_manager.is_author(rendered_id, current_user.id):
 
         if note_manager.is_encrypted(rendered_id):
-            rendered = note_manager.find_by_id_encrypted(rendered_id, "haslo")
+
+            return redirect(url_for('unlock', rendered_id=rendered_id))
         else:
             rendered = note_manager.find_by_id(rendered_id)
 
@@ -154,6 +196,10 @@ def limit_handler(e):
 @app.errorhandler(404)
 def limit_handler(e):
     return render_template('error.html', error='Page not found...', return_btn=True)
+
+@app.errorhandler(405)
+def limit_handler(e):
+    return render_template('error.html')
 
 @app.errorhandler(429)
 def limit_handler(e):

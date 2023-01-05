@@ -12,10 +12,14 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Accept')
 
-
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired()], render_kw={"placeholder": "Username", "autofocus": True})
 
     password = PasswordField(validators=[InputRequired()], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Accept')
+
+class KeyForm(FlaskForm):
+    key = PasswordField(validators=[InputRequired()], render_kw={"placeholder": "Key"})
 
     submit = SubmitField('Accept')

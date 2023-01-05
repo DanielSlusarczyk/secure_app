@@ -37,15 +37,21 @@
       </div>
       <form action={{ url_for('save') }} method="POST">
         <div style="text-align:right">
-          <div>
-            <input type="checkbox" id="public" name="public" checked>
-            <label for="public">Public</label>
+          <div id="nav">
+            <div id="first">
+              <div>
+                <input type="checkbox" id="public" name="public" checked>
+                <label for="public">Public</label>
+              </div>
+              <div>
+                <input type="checkbox" id="encrypt" name="encrypt" checked>
+                <label for="encrypt">Encrypt</label>
+              </div>
+            </div>
+            <div id="second">
+              <input id="add" type="submit" value="Save">
+            </div>
           </div>
-          <div>
-            <input type="checkbox" id="encrypt" name="encrypt" checked>
-            <label for="encrypt">Encrypt</label>
-          </div>
-          <input id="add" type="submit" value="Save">
         </div>
       </form>
     </div>
