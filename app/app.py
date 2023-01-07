@@ -216,7 +216,3 @@ def limit_handler(e):
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('error.html', error='CSRF Protection')
-
-if __name__ == '__main__':
-
-    app.run('0.0.0.0', 5000)

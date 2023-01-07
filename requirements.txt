@@ -1,4 +1,5 @@
 Flask==2.2.2
+gunicorn==20.1.0
 Flask_Login==0.6.2
 Flask-WTF==1.0.1
 Markdown==3.4.1
@@ -8,3 +9,4 @@ password_strength==0.0.3.post2
 Flask-Limiter==3.1.0
 bleach==5.0.1
 pycryptodomex==3.16.0
+python-dotenv==0.21.0
