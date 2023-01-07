@@ -20,7 +20,7 @@
         </div>
         <form action={{ url_for('lock') }} method="POST">
 
-          {{ form.hidden_tag() }}
+          {{ form.csrf_token }}
           <div>{{ form.key }}</div>
           <div>{{ form.submit }}</div>
         </form>
@@ -33,7 +33,7 @@
         </div>
         <form action={{ url_for('unlock', rendered_id = rendered_id) }} method="POST">
 
-          {{ form.hidden_tag() }}
+          {{ form.csrf_token }}
           <div>{{ form.key }}</div>
           <div>{{ form.submit }}</div>
         </form>

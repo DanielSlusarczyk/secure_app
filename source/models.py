@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
-from source.dbManager import DBManager
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms.validators import InputRequired, DataRequired, Length
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[
@@ -23,3 +22,14 @@ class KeyForm(FlaskForm):
     key = PasswordField(validators=[InputRequired()], render_kw={"placeholder": "Key"})
 
     submit = SubmitField('Accept')
+
+class NoteForm(FlaskForm):
+    markdown = TextAreaField()
+
+    submit = SubmitField('View')
+
+class MarkdownForm(FlaskForm):
+    public = BooleanField('Public', validators=[DataRequired()])
+    encrypt = BooleanField('Encrypt', validators=[DataRequired()])
+
+    submit = SubmitField('Save')

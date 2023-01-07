@@ -1,23 +1,25 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from collections import deque
+from flask_wtf.csrf import CSRFError, CSRFProtect
 from dotenv import load_dotenv
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
-from source.models import RegisterForm, LoginForm, KeyForm
-
+from source.models import RegisterForm, LoginForm, KeyForm, MarkdownForm, NoteForm
 import os
 
 load_dotenv()
 app = Flask(__name__)
+csrf = CSRFProtect()
 db_manager, user_manager, note_manager = DBManager(), UserManager(), NoteManager()
 login_manager = LoginManager()
 login_manager.init_app(app)
-app.secret_key = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('CSRF_SECRET_KEY')
 limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')])
+csrf.init_app(app)
 
 @login_manager.user_loader
 def user_loader(username):
@@ -29,8 +31,6 @@ def request_loader(request):
     username = request.form.get('username')
     user = user_loader(username)
     return user
-
-recent_users = deque(maxlen=3)
 
 @app.route('/')
 def main():
@@ -96,10 +96,12 @@ def logout():
 @login_required
 def welcom():
     if request.method == 'GET':
+        form = NoteForm()
+
         username = current_user.id
         notes = note_manager.find_by_author(username)
 
-        return render_template('welcom.html', username=username, notes=notes)
+        return render_template('welcom.html', form = form, username=username, notes=notes)
 
     return redirect('/login')
 
@@ -146,12 +148,14 @@ def unlock(rendered_id):
 @app.route('/render', methods=['POST'])
 @login_required
 def render():
+    form = MarkdownForm()
+
     rendered, is_safe = note_manager.render(current_user.id, request.form.get('markdown',''))
     
     if is_safe:
-        return render_template('markdown.html', rendered=rendered)
+        return render_template('markdown.html', form = form, rendered=rendered)
     else:
-        return render_template('markdown.html', rendered=rendered, error='Some information has been transformed due to safety policy!')
+        return render_template('markdown.html', form = form, rendered=rendered, error='Some information has been transformed due to safety policy!')
 
 @app.route('/save', methods=['POST'])
 @login_required
@@ -208,6 +212,10 @@ def limit_handler(e):
 @app.errorhandler(500)
 def limit_handler(e):
     return render_template('error.html')
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return render_template('error.html', error='CSRF Protection')
 
 if __name__ == '__main__':
 

@@ -23,13 +23,14 @@
       <div class="wrapper">
 
         <form action={{ url_for('render') }} method="POST">
+
+          {{ form.csrf_token }}
           <label for="markdown">Input some markdown:</label><br>
           <div id="space">
-            <textarea id="markdown" name="markdown" rows="20" cols="100"></textarea>
+            {{ form.markdown }}
           </div>
-          <br>
           <div style="text-align:right">
-            <input id="add" type="submit" value="View">
+            {{ form.submit }}
           </div>
         </form>
       </div>
