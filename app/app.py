@@ -18,7 +18,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('CSRF_SECRET_KEY')
-limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')])
+limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')], storage_uri="memory://")
 csrf.init_app(app)
 
 @login_manager.user_loader
