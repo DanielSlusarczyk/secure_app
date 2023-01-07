@@ -126,11 +126,12 @@ def lock():
 @app.route('/unlock/<rendered_id>', methods=['GET', 'POST'])
 @login_required
 def unlock(rendered_id):
-    form = KeyForm()
+    key_form = KeyForm()
+    markdown_form = MarkdownForm()
     
     if note_manager.is_author(rendered_id, current_user.id):
         if request.method == 'GET':
-            return render_template('key.html', form = form, rendered_id = rendered_id)
+            return render_template('key.html', form = key_form, rendered_id = rendered_id)
 
         if request.method == 'POST':
             key = request.form.get('key')
@@ -138,9 +139,10 @@ def unlock(rendered_id):
             rendered = note_manager.find_by_id_encrypted(rendered_id, key)
 
             if rendered is not None:
-                return render_template('markdown.html', rendered=rendered)
+
+                return render_template('markdown.html', form = markdown_form, rendered=rendered)
             else:
-                return render_template('key.html', form = form, error="Key is invalid!")
+                return render_template('key.html', form = key_form, error="Key is invalid!")
 
     return '', 404
 
@@ -179,6 +181,7 @@ def save():
 @app.route('/render/<rendered_id>', methods=['GET'])
 @login_required
 def render_old(rendered_id):
+    form = MarkdownForm()
 
     if note_manager.is_author(rendered_id, current_user.id):
 
@@ -189,7 +192,7 @@ def render_old(rendered_id):
             rendered = note_manager.find_by_id(rendered_id)
 
         if rendered is not None:
-            return render_template('markdown.html', rendered=rendered)
+            return render_template('markdown.html', form = form, rendered=rendered)
     
     return '', 404
 
