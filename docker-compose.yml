@@ -18,12 +18,11 @@ services:
       dockerfile: Dockerfile
     container_name: flask
     command: gunicorn --chdir app --bind 0.0.0.0:8000 --workers 4 "wsgi:app"
-    volumes:
-      - ./:/var/www
     networks:
       my-network:
         aliases:
           - flask-app
-
+    env_file:
+      - .env
 networks:
   my-network:
