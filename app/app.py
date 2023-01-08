@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf.csrf import CSRFError, CSRFProtect
-from dotenv import load_dotenv
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from dotenv import load_dotenv
 from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
@@ -11,15 +11,21 @@ from source.models import RegisterForm, LoginForm, KeyForm, MarkdownForm, NoteFo
 import os
 
 load_dotenv()
-app = Flask(__name__)
-csrf = CSRFProtect()
-db_manager, user_manager, note_manager = DBManager(), UserManager(), NoteManager()
+
 login_manager = LoginManager()
-login_manager.init_app(app)
+db_manager = DBManager()
+user_manager = UserManager()
+note_manager = NoteManager()
+csrf = CSRFProtect()
+
+app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('CSRF_SECRET_KEY')
-limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')], storage_uri="memory://")
+
 csrf.init_app(app)
+login_manager.init_app(app)
+limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')], storage_uri="memory://")
+
 
 @login_manager.user_loader
 def user_loader(username):
@@ -35,6 +41,10 @@ def request_loader(request):
 @app.route('/')
 def main():
     return render_template('main.html')
+
+@app.route('/error')
+def error():
+    return "", 404
 
 # Registration
 @app.route('/register', methods=['GET', 'POST'])
@@ -144,7 +154,7 @@ def unlock(rendered_id):
             else:
                 return render_template('key.html', form = key_form, error="Key is invalid!")
 
-    return '', 404
+    abort(404)
 
 # Rendered note panel
 @app.route('/render', methods=['POST'])
@@ -194,27 +204,21 @@ def render_old(rendered_id):
         if rendered is not None:
             return render_template('markdown.html', form = form, rendered=rendered)
     
-    return '', 404
-
-@app.errorhandler(401)
-def limit_handler(e):
-    return render_template('error.html', error='Authorization required for this page...', return_btn=True, login_btn=True)
+    abort(404)
 
 @app.errorhandler(404)
-def limit_handler(e):
-    return render_template('error.html', error='Page not found...', return_btn=True)
+def handle_exception(e):
+    return_btn = True
+    login_btn = False
+    error = None
 
-@app.errorhandler(405)
-def limit_handler(e):
-    return render_template('error.html')
+    if e.code == 401:
+        login_btn = True
+        error = 'Authorization required for this page...'
+    elif e.code == 404:
+        error = 'Page not found...'
 
-@app.errorhandler(429)
-def limit_handler(e):
-    return render_template('error.html', error='Too many request... slow down!')
-
-@app.errorhandler(500)
-def limit_handler(e):
-    return render_template('error.html')
+    return render_template('error.html', error = error, return_btn  = return_btn, login_btn = login_btn)
 
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
