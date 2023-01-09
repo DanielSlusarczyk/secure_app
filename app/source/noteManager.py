@@ -102,7 +102,7 @@ class NoteManager:
             return None
 
     def find_by_author(self, author):
-        notes = self.db_manager.many('SELECT id, STRFTIME("%d/%m/%Y, %H:%M", addDate) FROM notes WHERE owner = ?', params = (author,))
+        notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", addDate), isEncrypted, isPublic FROM notes WHERE owner = ? ORDER BY addDate DESC', params = (author,))
         return notes
 
     def encrypt(self, plain_text, password):

@@ -44,7 +44,7 @@
         <table>
           <thead>
             <tr>
-              <th>Title</th>
+              <th>Author</th>
               <th>Note</th>
               <th>Date</th>
             </tr>
@@ -54,8 +54,23 @@
 
             <tr>
               <td>{{note.0}}</td>
-              <td><a class="single_note" href="{{ url_for('render') }}/{{note.0}}"> Note {{ loop.index }}</a></td>
-              <td>{{note.1}}</td>
+              <td>
+                <div id="note">
+                  <div id="first">
+                    {% if note.3 == 1 %}
+                    <img src="static/icons/encrypted.png">
+                    {% endif %}
+                    {% if note.4 == 1 %}
+                    <img src="static/icons/public.png">
+                    {% endif %}
+                  </div>
+                  <div id="second">
+                    
+                    <a class="single_note" href="{{ url_for('render') }}/{{note.1}}"> Note</a>
+                  </div>
+                </div>
+              </td>
+              <td>{{note.2}}</td>
             </tr>
             {% endfor %}
           </tbody>

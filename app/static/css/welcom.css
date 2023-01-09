@@ -21,16 +21,21 @@ th {
 }
 
 td {
-    height: 40px;
+    height: 50px;
     width: 10%;
 }
 
+img {
+    width: 25px;
+    margin-right: 5px;
+}
+
 .single_note {
-    font-size: 1.2em;
+    font-size: 1.5em;
 }
 
 .single_note:hover {
-    font-size: 1.2em;
+    font-size: 1.5em;
     font-weight: bold;
 }
 
@@ -39,7 +44,6 @@ td {
     width: 25px;
     height: 35px;
     margin-right: 15%;
-
 }
 
 #logout {
@@ -57,4 +61,24 @@ td {
     opacity: 0.8;
     padding: 10px 15px 10px 15px;
     border-radius: 10px;
+}
+
+#note {
+    overflow: hidden;
+}
+
+#first {
+    margin-top: 7px;
+    height: 40px;
+    text-align: right;
+    width: 50%;
+    float: left;
+}
+
+#second {
+    margin-top: 5px;
+    height: 50px;
+    width: 50%;
+    text-align: left;
+    overflow: hidden;
 }
