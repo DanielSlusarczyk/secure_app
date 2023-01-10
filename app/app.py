@@ -110,8 +110,9 @@ def welcom():
 
         username = current_user.id
         notes = note_manager.find_by_author(username)
+        public_notes = note_manager.find_public(username)
 
-        return render_template('welcom.html', form = form, username=username, notes=notes)
+        return render_template('welcom.html', form = form, username=username, notes=notes, public_notes=public_notes)
 
     return redirect('/login')
 
@@ -149,7 +150,6 @@ def unlock(rendered_id):
             rendered = note_manager.find_by_id_encrypted(rendered_id, key)
 
             if rendered is not None:
-
                 return render_template('markdown.html', form = markdown_form, rendered=rendered)
             else:
                 return render_template('key.html', form = key_form, error="Key is invalid!")
@@ -173,25 +173,28 @@ def render():
 @login_required
 def save():
     username = current_user.id
-    public = False
 
-    if request.form.get('public'):
-        public = True
-        
-    if request.form.get('encrypt'):
+    try:
+        type = int(request.form.get('type'))
+    except:
+        type = 1
+
+    if type == 1:
+        note_manager.save(username, False)
+    
+    if type == 2:
         return redirect('/lock')
 
-    else:
-        note_manager.save(username, public)
+    if type == 3:
+        note_manager.save(username, False)
     
     return redirect('/welcom')
     
 
 # Previous note panel
-@app.route('/render/<rendered_id>', methods=['GET'])
+@app.route('/show/<int:rendered_id>', methods=['GET'])
 @login_required
-def render_old(rendered_id):
-    form = MarkdownForm()
+def show(rendered_id):
 
     if note_manager.is_author(rendered_id, current_user.id):
 
@@ -202,20 +205,31 @@ def render_old(rendered_id):
             rendered = note_manager.find_by_id(rendered_id)
 
         if rendered is not None:
-            return render_template('markdown.html', form = form, rendered=rendered)
-    
+            return render_template('markdown.html', rendered=rendered)
+
+    if note_manager.is_public(rendered_id):
+        rendered = note_manager.find_by_id(rendered_id)
+
+        if rendered is not None:
+            return render_template('markdown.html', rendered=rendered)
+
     abort(404)
 
-@app.errorhandler(404)
+@app.errorhandler(Exception)
 def handle_exception(e):
     return_btn = True
     login_btn = False
     error = None
 
-    if e.code == 401:
+    try:
+        code = e.code
+    except:
+        code = None 
+
+    if code == 401:
         login_btn = True
         error = 'Authorization required for this page...'
-    elif e.code == 404:
+    elif code == 404:
         error = 'Page not found...'
 
     return render_template('error.html', error = error, return_btn  = return_btn, login_btn = login_btn)

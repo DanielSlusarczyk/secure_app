@@ -81,6 +81,16 @@ class NoteManager:
             return isAuthor
         except:
             return False
+    
+    def is_public(self, id):
+        try:
+            (state,) = self.db_manager.one('SELECT isPublic FROM notes WHERE id = ?', params = (id,))
+
+            is_public = (state == 1)
+            return is_public
+        except:
+            return False
+
 
     def find_by_id_encrypted(self, id, password):
         try:
@@ -94,15 +104,15 @@ class NoteManager:
             return None
 
     def find_by_id(self, id):
-        try:
-            (note,) = self.db_manager.one('SELECT note FROM notes WHERE id = ?', params = (id,))
-
-            return note
-        except:
-            return None
+        (note,) = self.db_manager.one('SELECT note FROM notes WHERE id = ?', params = (id,))
+        return note
 
     def find_by_author(self, author):
         notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", addDate), isEncrypted, isPublic FROM notes WHERE owner = ? ORDER BY addDate DESC', params = (author,))
+        return notes
+
+    def find_public(self, username):
+        notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", addDate), isPublic FROM notes WHERE isPublic = 1 AND isEncrypted != 1 AND owner != ? ORDER BY addDate DESC', params = (username,))
         return notes
 
     def encrypt(self, plain_text, password):

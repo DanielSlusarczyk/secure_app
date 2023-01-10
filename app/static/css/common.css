@@ -45,6 +45,7 @@ input {
   margin: 1em;
   font-size: 1em;
   text-align: center;
+  cursor: pointer;
 }
 
 input[type=text]:focus {

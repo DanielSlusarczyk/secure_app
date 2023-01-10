@@ -35,19 +35,15 @@
           {{ rendered |safe }}
         </div>
       </div>
+      {% if form %}
       <form action={{ url_for('save') }} method="POST">
-
         {{ form.csrf_token }}
         <div style="text-align:right">
           <div id="nav">
             <div id="first">
               <div>
-                {{ form.public }}
-                <label for="public">Public</label>
-              </div>
-              <div>
-                {{ form.encrypt }}
-                <label for="encrypt">Encrypt</label>
+                <label id="type_label" for="type">Type:</label>
+                {{ form.type }}
               </div>
             </div>
             <div id="second">
@@ -56,6 +52,7 @@
           </div>
         </div>
       </form>
+      {% endif %}
     </div>
   </div>
 </body>

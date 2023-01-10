@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import InputRequired, Length
 
 class RegisterForm(FlaskForm):
@@ -29,7 +29,8 @@ class NoteForm(FlaskForm):
     submit = SubmitField('View')
 
 class MarkdownForm(FlaskForm):
-    public = BooleanField('Public')
-    encrypt = BooleanField('Encrypt')
+    TYPE_CHOICES = [('1', 'Private'), ('2', 'Private (Encrypted)'), ('3', 'Public')]
+
+    type = SelectField(u'Type', choices=TYPE_CHOICES)
 
     submit = SubmitField('Save')

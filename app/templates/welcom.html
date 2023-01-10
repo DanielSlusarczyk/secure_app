@@ -29,7 +29,7 @@
           <div id="space">
             {{ form.markdown }}
           </div>
-          <div style="text-align:right">
+          <div class="right">
             {{ form.submit }}
           </div>
         </form>
@@ -51,7 +51,6 @@
           </thead>
           <tbody>
             {% for note in notes %}
-
             <tr>
               <td>{{note.0}}</td>
               <td>
@@ -63,10 +62,51 @@
                     {% if note.4 == 1 %}
                     <img src="static/icons/public.png">
                     {% endif %}
+                    {% if note.4 == 0 %}
+                    {% if note.3 == 0 %}
+                    <img src="static/icons/private.png">
+                    {% endif %}
+                    {% endif %}
                   </div>
                   <div id="second">
-                    
-                    <a class="single_note" href="{{ url_for('render') }}/{{note.1}}"> Note</a>
+                    <a class="single_note" href="{{ url_for('show', rendered_id=note.1) }}"> Note</a>
+                  </div>
+                </div>
+              </td>
+              <td>{{note.2}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      {% if public_notes|length > 0 %}
+      <div class="left" style="margin-left: 15%;">
+        <h2> Public notes: </h2>
+      </div>
+      <div class="wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Author</th>
+              <th>Note</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for note in public_notes %}
+            <tr>
+              <td>{{note.0}}</td>
+              <td>
+                <div id="note">
+                  <div id="first">
+                    {% if note.3 == 1 %}
+                    <img src="static/icons/public.png">
+                    {% endif %}
+                  </div>
+                  <div id="second">
+                    <a class="single_note" href="{{ url_for('show', rendered_id=note.1) }}"> Note</a>
                   </div>
                 </div>
               </td>
