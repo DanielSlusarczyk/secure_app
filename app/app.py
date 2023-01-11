@@ -190,7 +190,7 @@ def save():
         return redirect('/lock')
 
     if type == 3:
-        note_manager.save(username, False)
+        note_manager.save(username, True)
     
     return redirect('/welcom')
     
