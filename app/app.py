@@ -85,6 +85,10 @@ def login():
         if form.validate_on_submit():
             username = request.form.get('username')
             password = request.form.get('password')
+            host = request.remote_addr
+
+            wait_time = user_manager.verify_attempts(username, host)
+            print(f"You need to wait: {wait_time}")
 
             user = user_loader(username)
             if user_manager.validate(password, user):
@@ -215,7 +219,7 @@ def show(rendered_id):
 
     abort(404)
 
-@app.errorhandler(Exception)
+@app.errorhandler(404)
 def handle_exception(e):
     return_btn = True
     login_btn = False
