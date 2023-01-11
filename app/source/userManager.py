@@ -43,17 +43,15 @@ class UserManager:
         password += self.pepper
         return bcrypt.verify(password, user.password)
 
-    def verify_attempts(self, user, host):
-        self.db_manager.execute("INSERT INTO logins (user, host) VALUES (?, ?)", params = (user, host))
+    def reach_limit(self, user, host):
+        try:
+            self.db_manager.execute("INSERT INTO logins (user, host) VALUES (?, ?)", params = (user, host))
 
-        (attempts, ) = self.db_manager.one("SELECT COUNT() FROM logins WHERE host = ? AND attemp_time >= DATETIME(DATETIME(), '-5 minutes') ORDER BY attemp_time DESC", params = (host,))
-        
-        if attempts >= 5:
-            waits_time = self.db_manager.many("SELECT DATETIME(attemp_time, '+5 minutes') FROM logins WHERE host = ? ORDER BY attemp_time DESC LIMIT 5", params=(host, ))
-            print(waits_time)
-            return waits_time[-1]
+            (attempts, ) = self.db_manager.one("SELECT COUNT() FROM logins WHERE host = ? AND attemp_time >= DATETIME(DATETIME(), '-5 minutes') ORDER BY attemp_time DESC", params = (host,))
+        except:
+            return 0
 
-        return 0
+        return 1 if attempts >= 5 else 0
 
     def add(self, username, password):
 

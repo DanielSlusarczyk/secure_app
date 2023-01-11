@@ -34,7 +34,7 @@ input[type=submit]:hover {
     border-radius: 5px;
     font-size: 1.2em;
     width: 40%;
-    height: 3%;
+    height: 40px;
 }
 
 #logout {

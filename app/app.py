@@ -87,8 +87,8 @@ def login():
             password = request.form.get('password')
             host = request.remote_addr
 
-            wait_time = user_manager.verify_attempts(username, host)
-            print(f"You need to wait: {wait_time}")
+            if user_manager.reach_limit(username, host):
+                return render_template('login.html', form = form, error = 'Too many attempts! Wait a few minutes.')
 
             user = user_loader(username)
             if user_manager.validate(password, user):
@@ -219,7 +219,7 @@ def show(rendered_id):
 
     abort(404)
 
-@app.errorhandler(404)
+@app.errorhandler(Exception)
 def handle_exception(e):
     return_btn = True
     login_btn = False
@@ -235,6 +235,9 @@ def handle_exception(e):
         error = 'Authorization required for this page...'
     elif code == 404:
         error = 'Page not found...'
+    elif code == 429:
+        # Limiter error handler
+        error = 'Too many request! Slow down...'
 
     return render_template('error.html', error = error, return_btn  = return_btn, login_btn = login_btn)
 
