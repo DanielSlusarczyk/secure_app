@@ -12,16 +12,16 @@ class DBManager:
         self.connect()
         sql_cursor = self.db_connection.cursor()
 
-        sql_cursor.execute("DROP TABLE IF EXISTS users")
-        sql_cursor.execute("DROP TABLE IF EXISTS notes")
-        sql_cursor.execute("DROP TABLE IF EXISTS drafts")
-        sql_cursor.execute("DROP TABLE IF EXISTS logins")
-        
-        sql_cursor.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, username VARCHAR(32), password VARCHAR(128), addDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
-        sql_cursor.execute("CREATE TABLE notes (id INTEGER PRIMARY KEY, owner VARCHAR(32), note VARCHAR(500), isPublic INTEGER, isEncrypted INTEGER, salt VARCHAR(20), tag VARCHAR(20), nonce VARCHAR(20), addDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(owner) REFERENCES users(username))")
-        sql_cursor.execute("CREATE TABLE drafts (id INTEGER PRIMARY KEY, markdown VARCHAR(500), author VARCHAR(32), addDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(author) REFERENCES users(username))")
-        sql_cursor.execute("CREATE TABLE logins (id INTEGER PRIMARY KEY, user VARCHAR(32), host VARCHAR(32), attemp_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
-        self.db_connection.commit()
+        #sql_cursor.execute("DROP TABLE IF EXISTS users")
+        #sql_cursor.execute("DROP TABLE IF EXISTS notes")
+        #sql_cursor.execute("DROP TABLE IF EXISTS drafts")
+        #sql_cursor.execute("DROP TABLE IF EXISTS logins")
+        #
+        #sql_cursor.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, username VARCHAR(32), password VARCHAR(128), addDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+        #sql_cursor.execute("CREATE TABLE notes (id INTEGER PRIMARY KEY, owner VARCHAR(32), note VARCHAR(500), isPublic INTEGER, isEncrypted INTEGER, salt VARCHAR(20), tag VARCHAR(20), nonce VARCHAR(20), addDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(owner) REFERENCES users(username))")
+        #sql_cursor.execute("CREATE TABLE drafts (id INTEGER PRIMARY KEY, markdown VARCHAR(500), author VARCHAR(32), addDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(author) REFERENCES users(username))")
+        #sql_cursor.execute("CREATE TABLE logins (id INTEGER PRIMARY KEY, user VARCHAR(32), host VARCHAR(32), attemp_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+        #self.db_connection.commit()
     
     def execute(self, sql, params=()):
         self.insert(sql, params)

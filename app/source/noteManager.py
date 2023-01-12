@@ -9,12 +9,13 @@ class NoteManager:
     def __init__(self):
         self.db_manager = DBManager()
         self.allowed_tags = json.loads(os.getenv('ALLOWED_TAGS'))
+        self.allowed_attr = json.loads(os.getenv('ALLOWED_ATTR'))
         self.allowed_protocols = json.loads(os.getenv('ALLOWED_PROTOCOLS'))
 
     def render(self, author, text):
         note = markdown.markdown(text)
 
-        sanitized_note = bleach.clean(note, tags=self.allowed_tags, protocols=self.allowed_protocols)
+        sanitized_note = self.sanitize_markdown(note)
         is_safe = (note == sanitized_note)
 
         self.db_manager.insert('INSERT INTO drafts (author, markdown) VALUES (?, ?)', params = (author, text))
@@ -31,7 +32,7 @@ class NoteManager:
         if md is not None:
             md = markdown.markdown(md[0])
 
-            note = bleach.clean(md, tags=self.allowed_tags, protocols=self.allowed_protocols)
+            note = self.sanitize_markdown(md)
             
             isPublic = 1 if public else 0
 
@@ -52,7 +53,7 @@ class NoteManager:
             md = markdown.markdown(md[0])
             tag, salt, nonce = '', '', ''
 
-            note = bleach.clean(md, tags=self.allowed_tags, protocols=self.allowed_protocols)
+            note = self.sanitize_markdown(md)
             
             note, salt, nonce, tag = self.encrypt(note, password)
 
@@ -114,6 +115,9 @@ class NoteManager:
     def find_public(self, username):
         notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", addDate), isPublic FROM notes WHERE isPublic = 1 AND isEncrypted != 1 AND owner != ? ORDER BY addDate DESC', params = (username,))
         return notes
+
+    def sanitize_markdown(self, text):
+        return bleach.clean(text, tags=self.allowed_tags, protocols=self.allowed_protocols, attributes=self.allowed_attr)
 
     def encrypt(self, plain_text, password):
         salt = get_random_bytes(32)
