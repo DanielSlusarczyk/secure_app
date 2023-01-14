@@ -1,0 +1,39 @@
+# Witaj w aplikacji *Notes*
+*Notes* jest to bezpieczna aplikacja do przechowywania notatek umożliwiająca szyfrowanie, udostępnianie i podstawowe stylizowanie Twoich treści.
+
+
+## Stylizowanie notatek
+Aplikacja *Notes* pozwala na rozbudowane i bardzo intuicyjne stylizowanie notatek za pomocą **markdown**-u.
+
+### Pogrubienie
+Dowolny wyraz w notatce może zostać **pogrubiony**!
+
+### Wyjustowanie
+Dowolny wyraz może zostać również *wyjustowany*!
+
+### Dobieranie rozmiaru
+# Rozmiar 1
+## Rozmiar 2
+### Rozmiar 3
+#### Rozmiar 4
+##### Rozmiar 5
+###### Rozmiar 6
+
+### Dodawanie odnośników
+Dodanie odnośnika do strony: [Google](https://google.com).
+
+**Uwaga:** Dodawane odnośniki nie są walidowane. **Nie klikaj w niezaufane odnośniki**!
+
+### Listowanie elementów
+
+* Pierwszy element
+* Drugi element
+* Trzeci element
+
+### Dodawanie obrazów URL
+W obu przypadkach URL musi składać się z protokołu *https* podanego na samym początku i rozszerzenia *.jpg* lub *.png*. 
+
+**Uwaga:** Jeśli podany URL nie spełni naszych wymogów bezpieczeństwa zostanie usunięty!
+
+<img width="400px" src="https://chico.ca.us/sites/main/files/imagecache/lightbox/main-images/dog_license.jpg">
+
