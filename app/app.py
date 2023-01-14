@@ -68,6 +68,8 @@ def register():
                 return render_template('register.html', form = form, error = error)
             else:
                 return redirect('/login')
+        else:
+            return render_template('register.html', form = form)
 
     return redirect('/register')
 
@@ -96,7 +98,7 @@ def login():
                 return redirect('/welcom')
             else:
                 return render_template('login.html', form = form, error = 'Incorrect login or password!')
-        
+
         return render_template('login.html', form = form)
 
 # Logout
