@@ -53,6 +53,6 @@ class NoteForm(FlaskForm):
 class MarkdownForm(FlaskForm):
     TYPE_CHOICES = [('1', 'Private'), ('2', 'Private (Encrypted)'), ('3', 'Public')]
 
-    type = SelectField(u'Type', choices=TYPE_CHOICES)
+    type = SelectField('Type', choices=TYPE_CHOICES)
 
     submit = SubmitField('Save')

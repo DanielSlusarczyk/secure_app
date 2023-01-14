@@ -36,9 +36,9 @@ class DBManager:
     def one(self, sql, params=()):
         self.connect()
         sql_cursor = self.db_connection.cursor()
-        sql_cursor.execute(sql, params)
-
+        
         try:
+            sql_cursor.execute(sql, params)
             result = sql_cursor.fetchone()
         except:
             result = None
@@ -48,9 +48,9 @@ class DBManager:
     def many(self, sql, params=()):
         self.connect()
         sql_cursor = self.db_connection.cursor()
-        sql_cursor.execute(sql, params)
         
         try:
+            sql_cursor.execute(sql, params)
             result = sql_cursor.fetchall()
         except:
             result = None

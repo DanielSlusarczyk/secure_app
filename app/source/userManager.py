@@ -29,10 +29,8 @@ class UserManager:
         if username is None:
             return None
 
-        row = self.db_manager.one("SELECT id, username, password FROM users WHERE username = ?", params = (username,))
-        
         try:
-            id, username, password = row
+            (id, username, password) = self.db_manager.one("SELECT id, username, password FROM users WHERE username = ?", params = (username,))
         except:
             return None
 
@@ -60,6 +58,9 @@ class UserManager:
         return 1 if attempts >= 5 else 0
 
     def add(self, username, password):
+
+        if (not username or not password ):
+            return
 
         password += self.pepper
         hash = bcrypt.using(rounds=self.rounds).hash(password)
@@ -92,7 +93,6 @@ class UserManager:
                 continue
 
             raise ValidationError(f"Character {letter} is not allowed")
-
 
     def validate_strength(self, password):
 

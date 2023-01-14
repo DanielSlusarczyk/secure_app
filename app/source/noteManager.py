@@ -23,10 +23,8 @@ class NoteManager:
     
     def save(self, user, public):
         saved = False
-        try:
-            md = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (user,))
-        except:
-            md = None
+
+        md = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (user,))
 
         if md is not None:
 
@@ -42,10 +40,8 @@ class NoteManager:
 
     def lock(self, user, password):
         saved = False
-        try:
-            md = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (user,))
-        except:
-            md = None
+
+        md = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (user,))
 
         if md is not None:
             tag, salt, nonce = '', '', ''
@@ -91,8 +87,7 @@ class NoteManager:
 
     def find_by_id_encrypted(self, id, password):
         try:
-            row = self.db_manager.one('SELECT note, salt, tag, nonce FROM notes WHERE id = ?', params = (id,))
-            text, salt, tag, nonce = row
+            text, salt, tag, nonce = self.db_manager.one('SELECT note, salt, tag, nonce FROM notes WHERE id = ?', params = (id,))
 
             note = self.decrypt(text, password, salt, nonce, tag)
 
@@ -101,7 +96,11 @@ class NoteManager:
             return None
 
     def find_by_id(self, id):
-        (note,) = self.db_manager.one('SELECT note FROM notes WHERE id = ?', params = (id,))
+        try: 
+            (note,) = self.db_manager.one('SELECT note FROM notes WHERE id = ?', params = (id,))
+        except:
+            return None
+
         return note
 
     def find_by_author(self, author):
@@ -113,7 +112,11 @@ class NoteManager:
         return notes
 
     def find_draft(self, username):
-        (draft, ) = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (username,))
+        try:
+            (draft,) = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (username,))
+        except:
+            return None
+
         return draft
 
     def sanitized_markdown(self, user_text):
