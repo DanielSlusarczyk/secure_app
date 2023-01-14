@@ -2,7 +2,7 @@ from Cryptodome.Protocol.KDF import PBKDF2
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
 from source.dbManager import DBManager
-import os, markdown, bleach, json
+import os, markdown, bleach, json, re
 from base64 import b64encode, b64decode
 
 class NoteManager:
@@ -11,12 +11,11 @@ class NoteManager:
         self.allowed_tags = json.loads(os.getenv('ALLOWED_TAGS'))
         self.allowed_attr = json.loads(os.getenv('ALLOWED_ATTR'))
         self.allowed_protocols = json.loads(os.getenv('ALLOWED_PROTOCOLS'))
+        self.allowed_user_html = True if os.getenv('ALLOWED_USER_HTML') == "True" else False
 
     def render(self, author, text):
-        note = markdown.markdown(text)
 
-        sanitized_note = self.sanitize_markdown(note)
-        is_safe = (note == sanitized_note)
+        sanitized_note, is_safe = self.sanitized_markdown(text)
 
         self.db_manager.insert('INSERT INTO drafts (author, markdown) VALUES (?, ?)', params = (author, text))
 
@@ -30,9 +29,8 @@ class NoteManager:
             md = None
 
         if md is not None:
-            md = markdown.markdown(md[0])
 
-            note = self.sanitize_markdown(md)
+            note = self.sanitized_markdown(md[0])
             
             isPublic = 1 if public else 0
 
@@ -50,10 +48,8 @@ class NoteManager:
             md = None
 
         if md is not None:
-            md = markdown.markdown(md[0])
             tag, salt, nonce = '', '', ''
-
-            note = self.sanitize_markdown(md)
+            note = self.sanitized_markdown(md[0])
             
             note, salt, nonce, tag = self.encrypt(note, password)
 
@@ -120,8 +116,47 @@ class NoteManager:
         (draft, ) = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (username,))
         return draft
 
-    def sanitize_markdown(self, text):
-        return bleach.clean(text, tags=self.allowed_tags, protocols=self.allowed_protocols, attributes=self.allowed_attr)
+    def sanitized_markdown(self, user_text):
+        is_save = True
+
+        # Remove html added by user
+        if(not self.allowed_user_html):
+            text = self.remove_html(user_text)
+            is_save = is_save and (text == user_text)
+            user_text = text
+
+        # Render markdown
+        md = markdown.markdown(user_text)
+
+        # Only allowed tags, attributes and protocols
+        sanitized_md = bleach.clean(md, tags=self.allowed_tags, protocols=self.allowed_protocols, attributes=self.allowed_attr)
+        
+        # Only secure url in img tag
+        src_attrs = re.findall('<img[^>]*src="([^"]+)"[^>]*>', sanitized_md)
+        for src_attr in src_attrs:
+            if not self.validate_url(src_attr):
+                sanitized_md = sanitized_md.replace(src_attr, "")
+
+        is_save = is_save and (sanitized_md == md)
+        return sanitized_md, is_save
+
+    def remove_html(self, text):
+        return bleach.clean(text, tags=[], attributes={}, strip=True)
+
+    def validate_url(self, url):
+        # Only https protocol at the beginning
+        if(not re.search('^https:\/\/', url)):
+            return False
+
+        # Forbidden localhost and 127.0.0.1
+        if(re.search('localhost|127.0.0.1', url)):
+            return False
+
+        # Only jpg|png|gif extension at the end
+        if(not re.search('\.(jpg|png|gif)$', url)):
+            return False
+
+        return True
 
     def encrypt(self, plain_text, password):
         salt = get_random_bytes(32)
