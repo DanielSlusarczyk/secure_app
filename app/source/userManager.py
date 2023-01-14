@@ -67,15 +67,7 @@ class UserManager:
 
     def validate_new_username(self, username):
 
-        for letter in username:
-            if letter in string.ascii_letters:
-                continue
-            if letter in string.digits:
-                continue
-            if letter in self.allowed_signs:
-                continue
-
-            raise ValidationError(f"Character {letter} is not allowed in username")
+        self.validate_signs(username)
 
         already_exists = self.db_manager.one("SELECT 1 FROM users WHERE username = ?", params = (username,))
         if already_exists:
@@ -85,7 +77,22 @@ class UserManager:
         if self.password_policy.test(password) != []:
             raise ValidationError(f"Password should contain: {self.uppercase} uppercase, {self.numbers} numbers")
         
+        self.validate_signs(password)
+
         self.validate_strength(password)
+
+    def validate_signs(self, text):
+
+        for letter in text:
+            if letter in string.ascii_letters:
+                continue
+            if letter in string.digits:
+                continue
+            if letter in self.allowed_signs:
+                continue
+
+            raise ValidationError(f"Character {letter} is not allowed")
+
 
     def validate_strength(self, password):
 
@@ -104,8 +111,6 @@ class UserManager:
             elif not special and letter in self.allowed_signs:
                 special = True
                 alphabet += len(self.allowed_signs)
-            else:
-                raise ValidationError(f"Character {letter} is not allowed in password")
 
         entrophy = len(password) * math.log(alphabet, 2)
 
