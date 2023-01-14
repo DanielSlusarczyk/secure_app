@@ -27,7 +27,11 @@
           {{ form.csrf_token }}
           <label for="markdown">Input some markdown:</label><br>
           <div id="space">
-            {{ form.markdown }}
+            {% if draft %}
+              <textarea id="markdown" name="markdown">{{ draft }}</textarea>
+              {% else %}
+            <textarea id="markdown" name="markdown" placeholder="Note something new..."></textarea>
+              {% endif %}  
           </div>
           <div class="right">
             {{ form.submit }}

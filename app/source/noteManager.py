@@ -116,6 +116,10 @@ class NoteManager:
         notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", addDate), isPublic FROM notes WHERE isPublic = 1 AND isEncrypted != 1 AND owner != ? ORDER BY addDate DESC', params = (username,))
         return notes
 
+    def find_draft(self, username):
+        (draft, ) = self.db_manager.one('SELECT markdown FROM drafts WHERE author = ? ORDER BY addDate DESC LIMIT 1', params = (username,))
+        return draft
+
     def sanitize_markdown(self, text):
         return bleach.clean(text, tags=self.allowed_tags, protocols=self.allowed_protocols, attributes=self.allowed_attr)
 

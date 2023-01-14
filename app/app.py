@@ -115,8 +115,9 @@ def welcom():
         username = current_user.id
         notes = note_manager.find_by_author(username)
         public_notes = note_manager.find_public(username)
+        draft = note_manager.find_draft(username)
 
-        return render_template('welcom.html', form = form, username=username, notes=notes, public_notes=public_notes)
+        return render_template('welcom.html', form = form, username=username, notes=notes, public_notes=public_notes, draft = draft)
 
     return redirect('/login')
 
