@@ -13,7 +13,9 @@
         {% if logs|length > 0 %}
         <h3>Login attempts for your account:</h3>
           {% for log in logs %}
+          <div>
             > From host [<strong>{{ log.0 }}</strong>] - <strong>{{ log.2 }} </strong> attemps (last {{ log.1 }})
+          </div>
           {% endfor %}
         {% endif %}
       </div>
