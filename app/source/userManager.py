@@ -3,6 +3,7 @@ from source.dbManager import DBManager
 from wtforms import ValidationError
 from flask_login import UserMixin
 from passlib.hash import bcrypt
+from uuid import uuid4
 import os, string, math
 
 class User(UserMixin):
@@ -57,14 +58,38 @@ class UserManager:
 
         return 1 if attempts >= 5 else 0
 
-    def add(self, username, password):
+    def add(self, username, password, email):
 
-        if (not username or not password ):
-            return
+        if (not username or not password or not email):
+            return "Some credential is empty"
 
         password += self.pepper
         hash = bcrypt.using(rounds=self.rounds).hash(password)
-        self.db_manager.execute("INSERT INTO users (username, password) VALUES (?, ?)", params = (username, hash))
+        self.db_manager.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", params = (username, hash, email))
+
+    def generate_token(self, username, email):
+        
+        if (not username or not email):
+            return
+        
+        token = str(uuid4())
+        self.db_manager.execute("UPDATE users SET token = ? WHERE username = ? AND email = ?", params = (token, username, email))
+
+        return token
+
+    def set_password(self, username, email, token, new_pass):
+
+        if (not username or not email or not token or not new_pass):
+            return "Credentials are invalid"
+        
+        correct_credential = self.db_manager.one("SELECT 1 FROM users WHERE username = ? AND email = ? AND token = ?", params = (username, email, token))
+
+        if correct_credential is None:
+            return "Credentials are invalid"
+
+        new_pass += self.pepper
+        hash = bcrypt.using(rounds=self.rounds).hash(new_pass)
+        self.db_manager.execute("UPDATE users SET password = ? WHERE username = ? AND email = ? AND token = ?", params = (hash, username, email, token))
 
     def validate_new_username(self, username):
 
@@ -73,6 +98,12 @@ class UserManager:
         already_exists = self.db_manager.one("SELECT 1 FROM users WHERE username = ?", params = (username,))
         if already_exists:
             raise ValidationError("Username already exists")
+
+    def validate_recovery_data(self, username, email):
+
+        already_exists = self.db_manager.one("SELECT 1 FROM users WHERE username = ? AND email = ?", params = (username, email))
+        if already_exists is None:
+            return "Credentials are invalid"
 
     def validate_new_password(self, password):
         if self.password_policy.test(password) != []:

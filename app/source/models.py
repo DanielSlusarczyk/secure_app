@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, ValidationError
-from wtforms.validators import InputRequired, Length
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, ValidationError, EmailField
+from wtforms.validators import InputRequired, Length, Email
 from source.userManager import UserManager
 import string
 
@@ -12,6 +12,12 @@ class RegisterForm(FlaskForm):
                 InputRequired(message="Username should not be empty"), 
                 Length(min=user_manager.min_length, max=user_manager.max_length, message="Username should be at least %(min)d and max %(max)d characters long")], 
             render_kw={"placeholder": "Username", "autofocus": True})
+
+    email = EmailField(
+            validators=[
+                InputRequired(message="E-mail should not be empaty"),
+                Email(message="E-mail is invalid")],
+                render_kw={"placeholder": "E-mail"})
 
     password = PasswordField(
             validators=[
@@ -35,6 +41,36 @@ class LoginForm(FlaskForm):
     password = PasswordField(
             validators=[InputRequired()], 
             render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Accept')
+
+class PasswordRecoveryForm(FlaskForm):
+    username = StringField(
+            validators=[
+                InputRequired(message="Username should not be empty")], 
+            render_kw={"placeholder": "Username", "autofocus": True})
+
+    email = EmailField(
+            validators=[
+                InputRequired(message="E-mail should not be empaty"),
+                Email(message="E-mail is invalid")],
+                render_kw={"placeholder": "E-mail"})
+
+    submit = SubmitField('Accept')
+        
+class PasswordRecoveryTokenForm(FlaskForm):
+    token = StringField(
+            validators=[InputRequired()], 
+            render_kw={"placeholder": "Token"})
+
+    new_password = PasswordField(
+            validators=[
+                InputRequired(message="Password shoud not be empty"), 
+                Length(min=4, max=20, message="Password should be at least %(min)d and max %(max)d characters long")],
+            render_kw={"placeholder": "New password"})
+
+    def validate_new_password(self, _):
+        user_manager.validate_new_password(self.new_password.data)
 
     submit = SubmitField('Accept')
 

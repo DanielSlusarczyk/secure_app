@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
-from source.models import RegisterForm, LoginForm, LockForm, UnlockForm, MarkdownForm, NoteForm
+from source.models import RegisterForm, LoginForm, LockForm, UnlockForm, MarkdownForm, NoteForm, PasswordRecoveryForm, PasswordRecoveryTokenForm
 import os, markdown
 
 load_dotenv()
@@ -29,7 +29,7 @@ limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('RE
 def add_example():
     USER = "Read_me"
     PASS = "ajn2a37489"
-    user_manager.add(USER, PASS)
+    user_manager.add(USER, PASS, "")
     f = open("static/manual", "r")
     md = markdown.markdown(f.read())
     db_manager.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params = (USER, md, 0, 1))
@@ -47,13 +47,10 @@ def request_loader(request):
     user = user_loader(username)
     return user
 
+# Main page
 @app.route('/')
 def main():
     return render_template('main.html')
-
-@app.route('/error')
-def error():
-    return "", 404
 
 # Registration
 @app.route('/register', methods=['GET', 'POST'])
@@ -70,8 +67,9 @@ def register():
 
             username = request.form.get('username')
             password = request.form.get('password')
+            email = request.form.get('email')
 
-            error = user_manager.add(username, password)
+            error = user_manager.add(username, password, email)
         
             if error:
                 return render_template('register.html', form = form, error = error)
@@ -108,13 +106,66 @@ def login():
             else:
                 return render_template('login.html', form = form, error = 'Incorrect login or password!')
 
-        return render_template('login.html', form = form)
+        return render_template('login.html', form=form)
 
 # Logout
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect('/')
+
+# Password recovery
+@app.route('/password_recovery', methods=['GET', 'POST'])
+def password_recovery():
+    form = PasswordRecoveryForm()
+    token_form = PasswordRecoveryTokenForm()
+
+    if request.method == 'GET':
+        return render_template('password.html', state=1, form=form)
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            username = request.form.get('username')
+            email = request.form.get('email')
+            error = user_manager.validate_recovery_data(username, email)
+
+            if error is not None:
+                return render_template('password.html', state=1, form=form, error=error)
+            else:
+                token = user_manager.generate_token(username, email)
+
+                if token is not None:
+                    return render_template('password.html', state=2, form=token_form, token=token, username=username, email=email)
+        else:
+            return render_template('password.html', state=1, form=form)
+    
+    abort(404)
+
+# New password
+@app.route('/password_new', methods=['POST'])
+def password_new():
+    token_form = PasswordRecoveryTokenForm()
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+
+        if token_form.validate_on_submit():
+            token = request.form.get('token')
+
+            new_pass = request.form.get('new_password')
+
+
+            error = user_manager.set_password(username, email, token, new_pass)
+
+            if error is not None:
+                return render_template('password.html', state=2, form=token_form, error=error, username=username, email=email)
+            else:
+                return redirect('/login')
+        else:
+            return render_template('password.html', state=2, form=token_form, username=username, email=email)
+    
+    abort(404)
 
 # Main user panel
 @app.route('/welcom', methods=['GET'])
@@ -237,7 +288,7 @@ def show(rendered_id):
 
     abort(404)
 
-@app.errorhandler(Exception)
+@app.errorhandler(404)
 def handle_exception(e):
     return_btn = True
     login_btn = False
