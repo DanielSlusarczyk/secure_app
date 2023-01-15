@@ -34,6 +34,7 @@ def add_example():
     md = markdown.markdown(f.read())
     db_manager.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params = (USER, md, 0, 1))
 
+add_example()
 
 @login_manager.user_loader
 def user_loader(username):
@@ -119,7 +120,6 @@ def logout():
 @app.route('/welcom', methods=['GET'])
 @login_required
 def welcom():
-    add_example()
     if request.method == 'GET':
         form = NoteForm()
 
