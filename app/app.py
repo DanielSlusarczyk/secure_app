@@ -8,6 +8,7 @@ from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
 from source.models import RegisterForm, LoginForm, LockForm, UnlockForm, MarkdownForm, NoteForm, PasswordRecoveryForm, PasswordRecoveryTokenForm, LogoutForm
+from werkzeug.middleware.proxy_fix import ProxyFix 
 import os
 
 load_dotenv()
@@ -22,6 +23,7 @@ csrf=CSRFProtect()
 app=Flask(__name__)
 app.config['SECRET_KEY']=os.getenv('SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY']=os.getenv('CSRF_SECRET_KEY')
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
 csrf.init_app(app)
 login_manager.init_app(app)
@@ -87,6 +89,7 @@ def login():
             username=request.form.get('username')
             password=request.form.get('password')
             host=request.remote_addr
+            print(host)
 
             if user_manager.reach_limit(username, host):
                 return render_template('login.html', form=form, error='Too many attempts! Wait a few minutes.')
