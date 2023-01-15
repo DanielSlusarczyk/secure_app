@@ -8,6 +8,18 @@
 
 <body>
   <div class="container">
+    <div class="left">
+      <div class="logs">
+        {% if logs|length > 0 %}
+        <h3>Login attempts for your account:</h3>
+          {% for log in logs %}
+            > From host [<strong>{{ log.0 }}</strong>] - <strong>{{ log.2 }} </strong> attemps (last {{ log.1 }})
+          {% endfor %}
+        {% endif %}
+      </div>
+
+    </div>
+
     <div class="right">
       <form action={{ url_for('logout') }}>
         <input id="logout" type="submit" value="Log out" />
@@ -19,13 +31,13 @@
         <h1>Notes</h1>
         <h2>Welcom <strong>{{ username }}!</strong></h2>
       </div>
-
+      <div>
+        <label for="markdown">Input some markdown:</label><br>
+      </div>
       <div class="wrapper">
-
         <form action={{ url_for('render') }} method="POST">
 
           {{ form.csrf_token }}
-          <label for="markdown">Input some markdown:</label><br>
           <div id="space">
             {% if draft %}
               <textarea id="markdown" name="markdown">{{ draft }}</textarea>
@@ -103,13 +115,13 @@
             <tr>
               <td>{{note.0}}</td>
               <td>
-                <div id="note">
-                  <div id="first">
+                <div class="nav">
+                  <div class="first">
                     {% if note.3 == 1 %}
                     <img src="static/icons/public.png">
                     {% endif %}
                   </div>
-                  <div id="second">
+                  <div class="second">
                     <a class="single_note" href="{{ url_for('show', rendered_id=note.1) }}"> Note</a>
                   </div>
                 </div>

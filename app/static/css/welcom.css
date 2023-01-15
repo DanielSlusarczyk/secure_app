@@ -21,6 +21,7 @@ th {
 }
 
 td {
+    font-size: 1.2em;
     height: 50px;
     width: 10%;
 }
@@ -47,6 +48,30 @@ img {
     margin-left: 15%;
 }
 
+.nav {
+    overflow: hidden;
+}
+
+.first {
+    margin-top: 7px;
+    height: 40px;
+    text-align: right;
+    width: 50%;
+    float: left;
+}
+
+.second {
+    margin-top: 5px;
+    height: 50px;
+    width: 50%;
+    text-align: left;
+    overflow: hidden;
+}
+
+.logs {
+    opacity: 0.4;
+}
+
 #add {
     font-size: 1.2em;
     width: 25px;
@@ -68,24 +93,4 @@ img {
     opacity: 0.8;
     padding: 10px 15px 10px 15px;
     border-radius: 10px;
-}
-
-#note {
-    overflow: hidden;
-}
-
-#first {
-    margin-top: 12px;
-    height: 40px;
-    text-align: right;
-    width: 50%;
-    float: left;
-}
-
-#second {
-    margin-top: 5px;
-    height: 50px;
-    width: 50%;
-    text-align: left;
-    overflow: hidden;
 }

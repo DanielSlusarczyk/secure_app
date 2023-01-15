@@ -178,8 +178,9 @@ def welcom():
         notes = note_manager.find_by_author(username)
         public_notes = note_manager.find_public(username)
         draft = note_manager.find_draft(username)
+        logs = user_manager.find_logs(username)
 
-        return render_template('welcom.html', form = form, username=username, notes=notes, public_notes=public_notes, draft = draft)
+        return render_template('welcom.html', form = form, username=username, notes=notes, public_notes=public_notes, draft=draft, logs=logs)
 
     return redirect('/login')
 
@@ -288,7 +289,7 @@ def show(rendered_id):
 
     abort(404)
 
-@app.errorhandler(404)
+@app.errorhandler(Exception)
 def handle_exception(e):
     return_btn = True
     login_btn = False
