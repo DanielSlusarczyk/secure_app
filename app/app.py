@@ -217,7 +217,7 @@ def unlock(rendered_id):
                 rendered=note_manager.find_by_id_encrypted(rendered_id, key)
         
                 if rendered is not None:
-                    return render_template('markdown.html', form=markdown_form, rendered=rendered)
+                    return render_template('markdown.html', rendered=rendered)
                 else:
                     return render_template('key.html', form=key_form, rendered_id=rendered_id, error="Key is invalid!")
 
