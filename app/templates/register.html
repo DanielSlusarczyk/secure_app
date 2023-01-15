@@ -16,14 +16,6 @@
       </div>
 
       <div class="wrapper">
-        <form action={{ url_for('register') }} method="POST">
-          
-          {{ form.csrf_token }}
-          <div>{{ form.username }}</div>
-          <div>{{ form.email }}</div>
-          <div>{{ form.password }}</div>
-          <div>{{ form.submit }}</div>
-        </form>
         {% for field, errors in form.errors.items() %}
         <div>
           <p class="error"><strong>Info: </strong> {{ ', '.join(errors) }}</p>
@@ -32,6 +24,14 @@
         {% if error %}
         <p class="error"><strong>Info: </strong> {{ error }}</p>
         {% endif %}
+        <form action={{ url_for('register') }} method="POST">
+          
+          {{ form.csrf_token }}
+          <div>{{ form.username }}</div>
+          <div>{{ form.email }}</div>
+          <div>{{ form.password }}</div>
+          <div>{{ form.submit }}</div>
+        </form>
       </div>
 
       <div class="wrapper">
