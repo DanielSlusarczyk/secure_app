@@ -12,21 +12,21 @@ import os
 
 load_dotenv()
 
-login_manager = LoginManager()
-db_manager = DBManager()
-user_manager = UserManager()
-note_manager = NoteManager()
-csrf = CSRFProtect()
+login_manager=LoginManager()
+db_manager=DBManager()
+user_manager=UserManager()
+note_manager=NoteManager()
+csrf=CSRFProtect()
 
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('CSRF_SECRET_KEY')
+app=Flask(__name__)
+app.config['SECRET_KEY']=os.getenv('SECRET_KEY')
+app.config['WTF_CSRF_SECRET_KEY']=os.getenv('CSRF_SECRET_KEY')
 
 csrf.init_app(app)
 login_manager.init_app(app)
 db_manager.init()
-limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')], storage_uri="memory://")
+limiter=Limiter(get_remote_address, app=app, default_limits=[os.getenv('REQUESTS_LIMIT')], storage_uri="memory://")
 
 @login_manager.user_loader
 def user_loader(username):
@@ -35,8 +35,8 @@ def user_loader(username):
 
 @login_manager.request_loader
 def request_loader(request):
-    username = request.form.get('username')
-    user = user_loader(username)
+    username=request.form.get('username')
+    user=user_loader(username)
     return user
 
 # Main page
@@ -49,26 +49,26 @@ def main():
 @limiter.limit("50/day", methods=['POST'])
 @limiter.limit("10/minute" , methods=['POST'])
 def register():
-    form = RegisterForm()
+    form=RegisterForm()
 
-    if request.method == 'GET':
-        return render_template('register.html', form = form)
+    if request.method=='GET':
+        return render_template('register.html', form=form)
 
-    if request.method == 'POST':
+    if request.method=='POST':
         if form.validate_on_submit():
 
-            username = request.form.get('username')
-            password = request.form.get('password')
-            email = request.form.get('email')
+            username=request.form.get('username')
+            password=request.form.get('password')
+            email=request.form.get('email')
 
-            error = user_manager.add(username, password, email)
+            error=user_manager.add(username, password, email)
         
             if error:
-                return render_template('register.html', form = form, error = error)
+                return render_template('register.html', form=form, error=error)
             else:
                 return redirect('/login')
         else:
-            return render_template('register.html', form = form)
+            return render_template('register.html', form=form)
 
     return redirect('/register')
 
@@ -77,26 +77,26 @@ def register():
 @limiter.limit("50/day", methods=['POST'])
 @limiter.limit("5/minute", methods=['POST'])
 def login():
-    form = LoginForm()
+    form=LoginForm()
 
-    if request.method == 'GET':
-        return render_template('login.html', form = form)
+    if request.method=='GET':
+        return render_template('login.html', form=form)
 
-    if request.method == 'POST':
+    if request.method=='POST':
         if form.validate_on_submit():
-            username = request.form.get('username')
-            password = request.form.get('password')
-            host = request.remote_addr
+            username=request.form.get('username')
+            password=request.form.get('password')
+            host=request.remote_addr
 
             if user_manager.reach_limit(username, host):
-                return render_template('login.html', form = form, error = 'Too many attempts! Wait a few minutes.')
+                return render_template('login.html', form=form, error='Too many attempts! Wait a few minutes.')
 
-            user = user_loader(username)
+            user=user_loader(username)
             if user_manager.validate(password, user):
                 login_user(user)
                 return redirect('/welcom')
             else:
-                return render_template('login.html', form = form, error = 'Incorrect login or password!')
+                return render_template('login.html', form=form, error='Incorrect login or password!')
 
         return render_template('login.html', form=form)
 
@@ -111,22 +111,22 @@ def logout():
 @limiter.limit("5/minute", methods=['POST'])
 @app.route('/password_recovery', methods=['GET', 'POST'])
 def password_recovery():
-    form = PasswordRecoveryForm()
-    token_form = PasswordRecoveryTokenForm()
+    form=PasswordRecoveryForm()
+    token_form=PasswordRecoveryTokenForm()
 
-    if request.method == 'GET':
+    if request.method=='GET':
         return render_template('password.html', state=1, form=form)
 
-    if request.method == 'POST':
+    if request.method=='POST':
         if form.validate_on_submit():
-            username = request.form.get('username')
-            email = request.form.get('email')
-            error = user_manager.validate_recovery_data(username, email)
+            username=request.form.get('username')
+            email=request.form.get('email')
+            error=user_manager.validate_recovery_data(username, email)
 
             if error is not None:
                 return render_template('password.html', state=1, form=form, error=error)
             else:
-                token = user_manager.generate_token(username, email)
+                token=user_manager.generate_token(username, email)
 
                 if token is not None:
                     return render_template('password.html', state=2, form=token_form, token=token, username=username, email=email)
@@ -140,19 +140,19 @@ def password_recovery():
 @limiter.limit("5/minute", methods=['POST'])
 @app.route('/password_new', methods=['POST'])
 def password_new():
-    token_form = PasswordRecoveryTokenForm()
+    token_form=PasswordRecoveryTokenForm()
 
-    if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
+    if request.method=='POST':
+        username=request.form.get('username')
+        email=request.form.get('email')
 
         if token_form.validate_on_submit():
-            token = request.form.get('token')
+            token=request.form.get('token')
 
-            new_pass = request.form.get('new_password')
+            new_pass=request.form.get('new_password')
 
 
-            error = user_manager.set_password(username, email, token, new_pass)
+            error=user_manager.set_password(username, email, token, new_pass)
 
             if error is not None:
                 return render_template('password.html', state=2, form=token_form, error=error, username=username, email=email)
@@ -167,16 +167,16 @@ def password_new():
 @app.route('/welcom', methods=['GET'])
 @login_required
 def welcom():
-    if request.method == 'GET':
-        form = NoteForm()
+    if request.method=='GET':
+        form=NoteForm()
 
-        username = current_user.id
-        notes = note_manager.find_by_author(username)
-        public_notes = note_manager.find_public(username)
-        draft = note_manager.find_draft(username)
-        logs = user_manager.find_logs(username)
+        username=current_user.id
+        notes=note_manager.find_by_author(username)
+        public_notes=note_manager.find_public(username)
+        draft=note_manager.find_draft(username)
+        logs=user_manager.find_logs(username)
 
-        return render_template('welcom.html', form = form, username=username, notes=notes, public_notes=public_notes, draft=draft, logs=logs)
+        return render_template('welcom.html', form=form, username=username, notes=notes, public_notes=public_notes, draft=draft, logs=logs)
 
     return redirect('/login')
 
@@ -184,77 +184,77 @@ def welcom():
 @app.route('/lock', methods=['GET', 'POST'])
 @login_required
 def lock():
-    form = LockForm()
-    username = current_user.id
+    form=LockForm()
+    username=current_user.id
 
-    if request.method == 'GET':
-        return render_template('key.html', state = True, form = form)
+    if request.method=='GET':
+        return render_template('key.html', state=True, form=form)
 
-    if request.method == 'POST':
+    if request.method=='POST':
         if form.validate_on_submit():
-            key = request.form.get('key')
+            key=request.form.get('key')
             note_manager.lock(username, key)
             return redirect('/welcom')
         else:
-            return render_template('key.html', state = True, form = form)
+            return render_template('key.html', state=True, form=form)
     abort(404)
 
 # Obtain key for decrypt note
 @app.route('/unlock/<rendered_id>', methods=['GET', 'POST'])
 @login_required
 def unlock(rendered_id):
-    key_form = UnlockForm()
-    markdown_form = MarkdownForm()
+    key_form=UnlockForm()
+    markdown_form=MarkdownForm()
     
     if note_manager.is_author(rendered_id, current_user.id):
-        if request.method == 'GET':
-            return render_template('key.html', form = key_form, rendered_id = rendered_id)
+        if request.method=='GET':
+            return render_template('key.html', form=key_form, rendered_id=rendered_id)
 
-        if request.method == 'POST':
+        if request.method=='POST':
             if key_form.validate_on_submit():
-                key = request.form.get('key')
+                key=request.form.get('key')
 
-                rendered = note_manager.find_by_id_encrypted(rendered_id, key)
+                rendered=note_manager.find_by_id_encrypted(rendered_id, key)
         
                 if rendered is not None:
-                    return render_template('markdown.html', form = markdown_form, rendered=rendered)
+                    return render_template('markdown.html', form=markdown_form, rendered=rendered)
                 else:
-                    return render_template('key.html', form = key_form, rendered_id = rendered_id, error="Key is invalid!")
+                    return render_template('key.html', form=key_form, rendered_id=rendered_id, error="Key is invalid!")
 
             else:
-                return render_template('key.html', form = key_form)
+                return render_template('key.html', form=key_form)
     abort(404)
 
 # Rendered note panel
 @app.route('/render', methods=['POST'])
 @login_required
 def render():
-    form = MarkdownForm()
+    form=MarkdownForm()
 
-    rendered, is_safe = note_manager.render(current_user.id, request.form.get('markdown',''))
+    rendered, is_safe=note_manager.render(current_user.id, request.form.get('markdown',''))
     
     if is_safe:
-        return render_template('markdown.html', form = form, rendered=rendered)
+        return render_template('markdown.html', form=form, rendered=rendered)
     else:
-        return render_template('markdown.html', form = form, rendered=rendered, error='Some information has been transformed due to safety policy!')
+        return render_template('markdown.html', form=form, rendered=rendered, error='Some information has been transformed due to safety policy!')
 
 @app.route('/save', methods=['POST'])
 @login_required
 def save():
-    username = current_user.id
+    username=current_user.id
 
     try:
-        type = int(request.form.get('type'))
+        type=int(request.form.get('type'))
     except:
-        type = 1
+        type=1
 
-    if type == 1:
+    if type==1:
         note_manager.save(username, False)
     
-    if type == 2:
+    if type==2:
         return redirect('/lock')
 
-    if type == 3:
+    if type==3:
         note_manager.save(username, True)
     
     return redirect('/welcom')
@@ -271,40 +271,40 @@ def show(rendered_id):
 
             return redirect(url_for('unlock', rendered_id=rendered_id))
         else:
-            rendered = note_manager.find_by_id(rendered_id)
+            rendered=note_manager.find_by_id(rendered_id)
 
         if rendered is not None:
             return render_template('markdown.html', rendered=rendered)
 
     if note_manager.is_public(rendered_id):
-        rendered = note_manager.find_by_id(rendered_id)
+        rendered=note_manager.find_by_id(rendered_id)
 
         if rendered is not None:
             return render_template('markdown.html', rendered=rendered)
 
     abort(404)
 
-@app.errorhandler(404)
+@app.errorhandler(Exception)
 def handle_exception(e):
-    return_btn = True
-    login_btn = False
-    error = None
+    return_btn=True
+    login_btn=False
+    error=None
 
     try:
-        code = e.code
+        code=e.code
     except:
-        code = None 
+        code=None 
 
-    if code == 401:
-        login_btn = True
-        error = 'Authorization required for this page...'
-    elif code == 404:
-        error = 'Page not found...'
-    elif code == 429:
+    if code==401:
+        login_btn=True
+        error='Authorization required for this page...'
+    elif code==404:
+        error='Page not found...'
+    elif code==429:
         # Limiter error handler
-        error = 'Too many request! Slow down...'
+        error='Too many request! Slow down...'
 
-    return render_template('error.html', error = error, return_btn  = return_btn, login_btn = login_btn)
+    return render_template('error.html', error=error, return_btn =return_btn, login_btn=login_btn)
 
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):

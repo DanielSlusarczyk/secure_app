@@ -4,28 +4,28 @@ from wtforms.validators import InputRequired, Length, Email
 from source.userManager import UserManager
 import string
 
-user_manager = UserManager()
+user_manager=UserManager()
 
 class RegisterForm(FlaskForm):
-    username = StringField(
+    username=StringField(
             validators=[
                 InputRequired(message="Username should not be empty"), 
                 Length(min=user_manager.min_username, max=user_manager.max_username, message="Username should be at least %(min)d and max %(max)d characters long")], 
             render_kw={"placeholder": "Username", "autofocus": True})
 
-    email = EmailField(
+    email=EmailField(
             validators=[
                 InputRequired(message="E-mail should not be empaty"),
                 Email(message="E-mail is invalid")],
                 render_kw={"placeholder": "E-mail"})
 
-    password = PasswordField(
+    password=PasswordField(
             validators=[
                 InputRequired(message="Password shoud not be empty"), 
                 Length(min=4, max=20, message="Password should be at least %(min)d and max %(max)d characters long")],
             render_kw={"placeholder": "Password"})
 
-    submit = SubmitField('Accept')
+    submit=SubmitField('Accept')
 
     def validate_username(self, _):
         user_manager.validate_new_username(self.username.data)
@@ -34,36 +34,36 @@ class RegisterForm(FlaskForm):
         user_manager.validate_new_password(self.password.data)
 
 class LoginForm(FlaskForm):
-    username = StringField(
+    username=StringField(
             validators=[InputRequired()], 
             render_kw={"placeholder": "Username", "autofocus": True})
 
-    password = PasswordField(
+    password=PasswordField(
             validators=[InputRequired()], 
             render_kw={"placeholder": "Password"})
 
-    submit = SubmitField('Accept')
+    submit=SubmitField('Accept')
 
 class PasswordRecoveryForm(FlaskForm):
-    username = StringField(
+    username=StringField(
             validators=[
                 InputRequired(message="Username should not be empty")], 
             render_kw={"placeholder": "Username", "autofocus": True})
 
-    email = EmailField(
+    email=EmailField(
             validators=[
                 InputRequired(message="E-mail should not be empaty"),
                 Email(message="E-mail is invalid")],
                 render_kw={"placeholder": "E-mail"})
 
-    submit = SubmitField('Accept')
+    submit=SubmitField('Accept')
         
 class PasswordRecoveryTokenForm(FlaskForm):
-    token = StringField(
+    token=StringField(
             validators=[InputRequired()], 
             render_kw={"placeholder": "Token"})
 
-    new_password = PasswordField(
+    new_password=PasswordField(
             validators=[
                 InputRequired(message="Password shoud not be empty"), 
                 Length(min=4, max=20, message="Password should be at least %(min)d and max %(max)d characters long")],
@@ -72,10 +72,10 @@ class PasswordRecoveryTokenForm(FlaskForm):
     def validate_new_password(self, _):
         user_manager.validate_new_password(self.new_password.data)
 
-    submit = SubmitField('Accept')
+    submit=SubmitField('Accept')
 
 class LockForm(FlaskForm):
-    key = PasswordField(
+    key=PasswordField(
             validators=[InputRequired(),
             Length(min=4, max=20, message="Key should be at least %(min)d and max %(max)d characters long")], 
             render_kw={"placeholder": "Key"})
@@ -90,27 +90,27 @@ class LockForm(FlaskForm):
                 continue
             raise ValidationError(f"Character {letter} is not allowed")
 
-    submit = SubmitField('Accept')
+    submit=SubmitField('Accept')
 
 class UnlockForm(FlaskForm):
-    key = PasswordField(
+    key=PasswordField(
             validators=[InputRequired()], 
             render_kw={"placeholder": "Key"})
 
-    submit = SubmitField('Accept')
+    submit=SubmitField('Accept')
 
 class NoteForm(FlaskForm):
-    markdown = TextAreaField()
+    markdown=TextAreaField()
 
-    submit = SubmitField('View')
+    submit=SubmitField('View')
 
 class MarkdownForm(FlaskForm):
-    TYPE_CHOICES = [('1', 'Private'), ('2', 'Private (Encrypted)'), ('3', 'Public')]
+    TYPE_CHOICES=[('1', 'Private'), ('2', 'Private (Encrypted)'), ('3', 'Public')]
 
-    type = SelectField('Type', choices=TYPE_CHOICES)
+    type=SelectField('Type', choices=TYPE_CHOICES)
 
     def validate_type(self, _):
-        user_type = self.type.data
+        user_type=self.type.data
         
         if user_type == 1:
             return
@@ -121,4 +121,4 @@ class MarkdownForm(FlaskForm):
         
         raise ValidationError()
 
-    submit = SubmitField('Save')
+    submit=SubmitField('Save')

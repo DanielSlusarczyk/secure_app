@@ -2,15 +2,15 @@ import os, sqlite3, markdown
 
 class DBManager:
     def __init__(self):
-        self.database_path = os.getenv('DATABASE')
+        self.database_path=os.getenv('DATABASE')
         self.connect()
 
     def connect(self):
-        self.db_connection = sqlite3.connect(self.database_path)
+        self.db_connection=sqlite3.connect(self.database_path)
 
     def init(self):
         self.connect()
-        sql_cursor = self.db_connection.cursor()
+        sql_cursor=self.db_connection.cursor()
 
         sql_cursor.execute("DROP TABLE IF EXISTS users")
         sql_cursor.execute("DROP TABLE IF EXISTS notes")
@@ -29,39 +29,39 @@ class DBManager:
 
     def insert(self, sql, params=()):
         self.connect()
-        sql_cursor = self.db_connection.cursor()
+        sql_cursor=self.db_connection.cursor()
         sql_cursor.execute(sql, params)
         self.db_connection.commit()
         return sql_cursor.lastrowid
 
     def one(self, sql, params=()):
         self.connect()
-        sql_cursor = self.db_connection.cursor()
+        sql_cursor=self.db_connection.cursor()
         
         try:
             sql_cursor.execute(sql, params)
-            result = sql_cursor.fetchone()
+            result=sql_cursor.fetchone()
         except:
-            result = None
+            result=None
 
         return result
 
     def many(self, sql, params=()):
         self.connect()
-        sql_cursor = self.db_connection.cursor()
+        sql_cursor=self.db_connection.cursor()
         
         try:
             sql_cursor.execute(sql, params)
-            result = sql_cursor.fetchall()
+            result=sql_cursor.fetchall()
         except:
-            result = None
+            result=None
 
         return result
 
     def add_example(self):
-        USER = "Read_me"
-        PASS = "Majn2a37489"
-        f = open("static/manual", "r")
-        md = markdown.markdown(f.read())
-        self.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', params = (USER, "1", "ZoNJMylSAy@2vaHiOOXnl"))
-        self.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params = (USER, md, 0, 1))
+        USER="Read_me"
+        PASS="Majn2a37489"
+        f=open("static/manual", "r")
+        md=markdown.markdown(f.read())
+        self.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', params=(USER, "$2b$15$ft6CHBP9RdFD0oBwqcfuK.iAYm1H0kZdiZ5pT9R1fAJ.9ITo8qQcu", "wXXGrgvrir@wXXGrgvrir"))
+        self.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params=(USER, md, 0, 1))
