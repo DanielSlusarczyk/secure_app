@@ -104,11 +104,11 @@ class NoteManager:
         return note
 
     def find_by_author(self, author):
-        notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", addDate), isEncrypted, isPublic FROM notes WHERE owner = ? ORDER BY addDate DESC', params = (author,))
+        notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", DATETIME(addDate, "localtime")), isEncrypted, isPublic FROM notes WHERE owner = ? ORDER BY addDate DESC', params = (author,))
         return notes
 
     def find_public(self, username):
-        notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", addDate), isPublic FROM notes WHERE isPublic = 1 AND isEncrypted != 1 AND owner != ? ORDER BY addDate DESC', params = (username,))
+        notes = self.db_manager.many('SELECT owner, id, STRFTIME("%d/%m/%Y, %H:%M", DATETIME(addDate, "localtime")), isPublic FROM notes WHERE isPublic = 1 AND isEncrypted != 1 AND owner != ? ORDER BY addDate DESC', params = (username,))
         return notes
 
     def find_draft(self, username):
