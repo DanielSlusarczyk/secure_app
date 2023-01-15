@@ -2,7 +2,9 @@ version: '3.1'
 
 services:
   nginx:
-    image: nginx:1.15
+    build:
+      context: ./
+      dockerfile: Dockerfile_nginx
     container_name: nginx
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
@@ -18,7 +20,7 @@ services:
   flask:
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_flask
     container_name: flask
     command: gunicorn --chdir app --bind 0.0.0.0:8000 --workers 4 "wsgi:app"
     networks:
