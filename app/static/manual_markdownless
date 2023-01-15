@@ -53,9 +53,3 @@ Notatka publiczna widoczna dla wszystkich użytkowników w sekcji publicznych no
 <img width="20px" src="../static/icons/encrypted.png">
 Notatka prywatna (szyfrowana) widoczna tylko dla Ciebie. Wymaga podania specjalnego klucza, który jest niezbędny do ponownego wyświetlania notatki.
 Zapomnienie klucza oznacza utratę notatki. **Nikt inny nie zna Twojego klucza!**
-
-
-
-
-
-# Instrukcja napisana bez markdownu:

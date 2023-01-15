@@ -171,4 +171,4 @@ class UserManager:
         entrophy=len(password) * math.log(alphabet, 2)
 
         if entrophy <= self.entrophy:
-            raise ValidationError(f'Password is too weak. Use numbers, uppercase, lowercase and special signs')
+            raise ValidationError(f'Password is too weak. Use more numbers, uppercase, lowercase or special signs')

@@ -62,6 +62,10 @@ class DBManager:
         USER="Read_me"
         PASS="Majn2a37489"
         f=open("static/manual", "r")
+        f_less=open("static/manual_markdownless", "r")
+
         md=markdown.markdown(f.read())
+
+        manual = md + f_less
         self.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', params=(USER, "$2b$15$ft6CHBP9RdFD0oBwqcfuK.iAYm1H0kZdiZ5pT9R1fAJ.9ITo8qQcu", "wXXGrgvrir@wXXGrgvrir"))
-        self.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params=(USER, md, 0, 1))
+        self.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params=(USER, manual, 0, 1))
