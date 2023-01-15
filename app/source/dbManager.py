@@ -68,5 +68,5 @@ class DBManager:
         md_less = f_less.read()
 
         manual = md + md_less
-        self.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', params=(USER, "$2b$15$ft6CHBP9RdFD0oBwqcfuK.iAYm1H0kZdiZ5pT9R1fAJ.9ITo8qQcu", "wXXGrgvrir@wXXGrgvrir"))
+        self.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', params=(USER, "$2b$15$MCk1fbyJjalfQIYEpLxmLOCE3nsOor5nLvUcmnsiQzXkXBYfwXpQG", "wXXGrgvrir@wXXGrgvrir"))
         self.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params=(USER, manual, 0, 1))
