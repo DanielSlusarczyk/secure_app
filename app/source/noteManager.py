@@ -28,7 +28,7 @@ class NoteManager:
 
         if md is not None:
 
-            note = self.sanitized_markdown(md[0])
+            (note, _) = self.sanitized_markdown(md[0])
             
             isPublic = 1 if public else 0
 
@@ -45,7 +45,7 @@ class NoteManager:
 
         if md is not None:
             tag, salt, nonce = '', '', ''
-            note = self.sanitized_markdown(md[0])
+            (note, _) = self.sanitized_markdown(md[0])
             
             note, salt, nonce, tag = self.encrypt(note, password)
 
@@ -57,6 +57,7 @@ class NoteManager:
 
     def is_encrypted(self, id):
         try:
+            id = int(id)
             (isEncypted,) = self.db_manager.one('SELECT isEncrypted FROM notes WHERE id = ?', params = (id,))
 
             if isEncypted == 1:
@@ -68,6 +69,7 @@ class NoteManager:
 
     def is_author(self, id, alleged_author):
         try:
+            id = int(id)
             (author,) = self.db_manager.one('SELECT owner FROM notes WHERE id = ?', params = (id,))
             
             isAuthor = (author == alleged_author)
@@ -77,6 +79,7 @@ class NoteManager:
     
     def is_public(self, id):
         try:
+            id = int(id)
             (state,) = self.db_manager.one('SELECT isPublic FROM notes WHERE id = ?', params = (id,))
 
             is_public = (state == 1)
@@ -87,6 +90,7 @@ class NoteManager:
 
     def find_by_id_encrypted(self, id, password):
         try:
+            id = int(id)
             text, salt, tag, nonce = self.db_manager.one('SELECT note, salt, tag, nonce FROM notes WHERE id = ?', params = (id,))
 
             note = self.decrypt(text, password, salt, nonce, tag)

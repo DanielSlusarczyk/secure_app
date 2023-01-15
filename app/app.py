@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
-from source.models import RegisterForm, LoginForm, KeyForm, MarkdownForm, NoteForm
+from source.models import RegisterForm, LoginForm, LockForm, UnlockForm, MarkdownForm, NoteForm
 import os, markdown
 
 load_dotenv()
@@ -136,24 +136,27 @@ def welcom():
 @app.route('/lock', methods=['GET', 'POST'])
 @login_required
 def lock():
-    form = KeyForm()
+    form = LockForm()
     username = current_user.id
 
     if request.method == 'GET':
         return render_template('key.html', state = True, form = form)
 
     if request.method == 'POST':
-        key = request.form.get('key')
+        if form.validate_on_submit():
+            key = request.form.get('key')
+            note_manager.lock(username, key)
+            redirect('/welcom')
+        else:
+            return render_template('key.html', state = True, form = form)
 
-        note_manager.lock(username, key)
-
-    return redirect('/welcom')
+    abort(404)
 
 # Obtain key for decrypt note
 @app.route('/unlock/<rendered_id>', methods=['GET', 'POST'])
 @login_required
 def unlock(rendered_id):
-    key_form = KeyForm()
+    key_form = UnlockForm()
     markdown_form = MarkdownForm()
     
     if note_manager.is_author(rendered_id, current_user.id):
@@ -161,15 +164,18 @@ def unlock(rendered_id):
             return render_template('key.html', form = key_form, rendered_id = rendered_id)
 
         if request.method == 'POST':
-            key = request.form.get('key')
+            if key_form.validate_on_submit():
+                key = request.form.get('key')
 
-            rendered = note_manager.find_by_id_encrypted(rendered_id, key)
+                rendered = note_manager.find_by_id_encrypted(rendered_id, key)
+        
+                if rendered is not None:
+                    return render_template('markdown.html', form = markdown_form, rendered=rendered)
+                else:
+                    return render_template('key.html', form = key_form, rendered_id = rendered_id, error="Key is invalid!")
 
-            if rendered is not None:
-                return render_template('markdown.html', form = markdown_form, rendered=rendered)
             else:
-                return render_template('key.html', form = key_form, error="Key is invalid!")
-
+                return render_template('key.html', form = key_form)
     abort(404)
 
 # Rendered note panel
@@ -231,7 +237,7 @@ def show(rendered_id):
 
     abort(404)
 
-@app.errorhandler(404)
+@app.errorhandler(Exception)
 def handle_exception(e):
     return_btn = True
     login_btn = False
