@@ -28,7 +28,7 @@ limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('RE
 
 def add_example():
     USER = "Read_me"
-    PASS = "ajn2a37489"
+    PASS = "Majn2a37489"
     user_manager.add(USER, PASS, "")
     f = open("static/manual", "r")
     md = markdown.markdown(f.read())
@@ -115,6 +115,8 @@ def logout():
     return redirect('/')
 
 # Password recovery
+@limiter.limit("50/day", methods=['POST'])
+@limiter.limit("5/minute", methods=['POST'])
 @app.route('/password_recovery', methods=['GET', 'POST'])
 def password_recovery():
     form = PasswordRecoveryForm()
@@ -142,6 +144,8 @@ def password_recovery():
     abort(404)
 
 # New password
+@limiter.limit("50/day", methods=['POST'])
+@limiter.limit("5/minute", methods=['POST'])
 @app.route('/password_new', methods=['POST'])
 def password_new():
     token_form = PasswordRecoveryTokenForm()
