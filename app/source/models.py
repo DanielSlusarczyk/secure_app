@@ -104,6 +104,9 @@ class NoteForm(FlaskForm):
 
     submit=SubmitField('View')
 
+class LogoutForm(FlaskForm):
+    logout=SubmitField('Log out')
+
 class MarkdownForm(FlaskForm):
     TYPE_CHOICES=[('1', 'Private'), ('2', 'Private (Encrypted)'), ('3', 'Public')]
 

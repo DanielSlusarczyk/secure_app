@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
-from source.models import RegisterForm, LoginForm, LockForm, UnlockForm, MarkdownForm, NoteForm, PasswordRecoveryForm, PasswordRecoveryTokenForm
+from source.models import RegisterForm, LoginForm, LockForm, UnlockForm, MarkdownForm, NoteForm, PasswordRecoveryForm, PasswordRecoveryTokenForm, LogoutForm
 import os
 
 load_dotenv()
@@ -101,7 +101,7 @@ def login():
         return render_template('login.html', form=form)
 
 # Logout
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     logout_user()
     return redirect('/')
@@ -169,6 +169,7 @@ def password_new():
 def welcom():
     if request.method=='GET':
         form=NoteForm()
+        logout_form=LogoutForm()
 
         username=current_user.id
         notes=note_manager.find_by_author(username)
@@ -176,7 +177,7 @@ def welcom():
         draft=note_manager.find_draft(username)
         logs=user_manager.find_logs(username)
 
-        return render_template('welcom.html', form=form, username=username, notes=notes, public_notes=public_notes, draft=draft, logs=logs)
+        return render_template('welcom.html', form=form, username=username, notes=notes, public_notes=public_notes, draft=draft, logs=logs, logout_form=logout_form)
 
     return redirect('/login')
 
@@ -204,7 +205,7 @@ def lock():
 @login_required
 def unlock(rendered_id):
     key_form=UnlockForm()
-    markdown_form=MarkdownForm()
+    logout_form=LogoutForm()
     
     if note_manager.is_author(rendered_id, current_user.id):
         if request.method=='GET':
@@ -217,7 +218,7 @@ def unlock(rendered_id):
                 rendered=note_manager.find_by_id_encrypted(rendered_id, key)
         
                 if rendered is not None:
-                    return render_template('markdown.html', rendered=rendered)
+                    return render_template('markdown.html', rendered=rendered, logout_form=logout_form)
                 else:
                     return render_template('key.html', form=key_form, rendered_id=rendered_id, error="Key is invalid!")
 
@@ -230,13 +231,14 @@ def unlock(rendered_id):
 @login_required
 def render():
     form=MarkdownForm()
+    logout_form=LogoutForm()
 
     rendered, is_safe=note_manager.render(current_user.id, request.form.get('markdown',''))
     
     if is_safe:
-        return render_template('markdown.html', form=form, rendered=rendered)
+        return render_template('markdown.html', form=form, rendered=rendered, logout_form=logout_form)
     else:
-        return render_template('markdown.html', form=form, rendered=rendered, error='Some information has been transformed due to safety policy!')
+        return render_template('markdown.html', form=form, rendered=rendered, error='Some information has been transformed due to safety policy!', logout_form=logout_form)
 
 @app.route('/save', methods=['POST'])
 @login_required
@@ -264,6 +266,7 @@ def save():
 @app.route('/show/<int:rendered_id>', methods=['GET'])
 @login_required
 def show(rendered_id):
+    logout_form=LogoutForm()
 
     if note_manager.is_author(rendered_id, current_user.id):
 
@@ -274,17 +277,17 @@ def show(rendered_id):
             rendered=note_manager.find_by_id(rendered_id)
 
         if rendered is not None:
-            return render_template('markdown.html', rendered=rendered)
+            return render_template('markdown.html', rendered=rendered, logout_form=logout_form)
 
     if note_manager.is_public(rendered_id):
         rendered=note_manager.find_by_id(rendered_id)
 
         if rendered is not None:
-            return render_template('markdown.html', rendered=rendered)
+            return render_template('markdown.html', rendered=rendered, logout_form=logout_form)
 
     abort(404)
 
-@app.errorhandler(Exception)
+@app.errorhandler(404)
 def handle_exception(e):
     return_btn=True
     login_btn=False

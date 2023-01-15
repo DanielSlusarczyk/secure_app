@@ -21,9 +21,12 @@
     </div>
 
     <div class="right">
-      <form action={{ url_for('logout') }}>
-        <input id="logout" type="submit" value="Log out" />
+      {% if logout_form %}
+      <form action={{ url_for('logout') }} method="POST">
+        {{ logout_form.csrf_token }}
+        {{ logout_form.logout }}
       </form>
+      {% endif %}
     </div>
 
     <div class="center">
