@@ -194,10 +194,9 @@ def lock():
         if form.validate_on_submit():
             key = request.form.get('key')
             note_manager.lock(username, key)
-            redirect('/welcom')
+            return redirect('/welcom')
         else:
             return render_template('key.html', state = True, form = form)
-
     abort(404)
 
 # Obtain key for decrypt note
@@ -285,7 +284,7 @@ def show(rendered_id):
 
     abort(404)
 
-@app.errorhandler(Exception)
+@app.errorhandler(404)
 def handle_exception(e):
     return_btn = True
     login_btn = False

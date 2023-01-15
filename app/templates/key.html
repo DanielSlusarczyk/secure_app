@@ -10,7 +10,6 @@
   <div class="container">
     <div class="center">
 
-
       <div class="wrapper">
         {% if state %}
 
@@ -18,6 +17,18 @@
           <h1>Notes</h1>
           <h2>Determine your secret key for this note</h2>
         </div>
+
+        <div class="wrapper">
+          {% if error %}
+          <p class="error"><strong>Info: </strong> {{ error }}</p>
+          {% endif %}
+          {% for field, errors in form.errors.items() %}
+          <div>
+            <p class="error"><strong>Info: </strong> {{ ', '.join(errors) }}</p>
+          </div>
+          {% endfor %}
+        </div>
+        
         <form action={{ url_for('lock') }} method="POST">
 
           {{ form.csrf_token }}
@@ -31,14 +42,6 @@
           <h1>Notes</h1>
           <h2>Pass the specific key for this note</h2>
         </div>
-        <form action={{ url_for('unlock', rendered_id = rendered_id) }} method="POST">
-
-          {{ form.csrf_token }}
-          <div>{{ form.key }}</div>
-          <div>{{ form.submit }}</div>
-        </form>
-
-        {% endif %}
 
         <div class="wrapper">
           {% if error %}
@@ -50,8 +53,15 @@
           </div>
           {% endfor %}
         </div>
+        
+        <form action={{ url_for('unlock', rendered_id = rendered_id) }} method="POST">
 
+          {{ form.csrf_token }}
+          <div>{{ form.key }}</div>
+          <div>{{ form.submit }}</div>
+        </form>
 
+        {% endif %}
       </div>
 
     </div>
