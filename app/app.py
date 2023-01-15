@@ -8,7 +8,7 @@ from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
 from source.models import RegisterForm, LoginForm, KeyForm, MarkdownForm, NoteForm
-import os
+import os, markdown
 
 load_dotenv()
 
@@ -25,6 +25,14 @@ app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('CSRF_SECRET_KEY')
 csrf.init_app(app)
 login_manager.init_app(app)
 limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')], storage_uri="memory://")
+
+def add_example():
+    USER = "Read_me"
+    PASS = "ajn2a37489"
+    user_manager.add(USER, PASS)
+    f = open("static/manual", "r")
+    md = markdown.markdown(f.read())
+    db_manager.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params = (USER, md, 0, 1))
 
 
 @login_manager.user_loader
@@ -111,6 +119,7 @@ def logout():
 @app.route('/welcom', methods=['GET'])
 @login_required
 def welcom():
+    add_example()
     if request.method == 'GET':
         form = NoteForm()
 

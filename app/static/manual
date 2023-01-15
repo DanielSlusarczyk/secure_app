@@ -1,0 +1,55 @@
+# Witaj w aplikacji ***Notes***
+*Notes* jest to bezpieczna aplikacja do przechowywania notatek umożliwiająca szyfrowanie, udostępnianie i podstawowe stylizowanie Twoich treści. Każda dodawana notatka jest szczegółowo filtrowana pod względem bezpieczeństwa, więc jeśli zobaczysz komunikat o usunięciu pewnych treści z Twojej notatki to znaczy, że zawiera fragmenty uznawane przez nas za niezbezpieczne.
+
+
+## Stylizowanie notatek
+Aplikacja *Notes* pozwala na rozbudowane i bardzo intuicyjne stylizowanie notatek za pomocą **markdown**-u.
+
+### Pogrubienie
+Dowolny wyraz w notatce może zostać **pogrubiony**!
+
+### Wyjustowanie
+Dowolny wyraz może zostać również *wyjustowany*!
+
+### Dobieranie rozmiaru
+Dowolny fragment tekstu może zostać przedstawiony w 6 różnych rozmiarach!
+
+* # Rozmiar 1
+* ## Rozmiar 2
+* ### Rozmiar 3
+* #### Rozmiar 4
+* ##### Rozmiar 5
+* ###### Rozmiar 6
+
+### Dodawanie odnośników
+Dodanie odnośnika do strony: [Google](https://google.com).
+
+**Uwaga:** Dodawane odnośniki nie są walidowane. **Nie klikaj w niezaufane odnośniki**!
+
+### Listowanie elementów
+
+* Pierwszy element
+* Drugi element
+* Trzeci element
+
+### Dodawanie obrazów URL
+Podany URL musi składać się z protokołu *https* podanego na samym początku i rozszerzenia *.jpg* lub *.png*.
+
+**Uwaga:** Jeśli podany URL nie spełni naszych wymogów bezpieczeństwa zostanie usunięty!
+
+<img width="400px" src="https://chico.ca.us/sites/main/files/imagecache/lightbox/main-images/dog_license.jpg">
+
+
+
+## Udostępnianie notatek
+Aplikacja *Notes* umożliwia również dzielenie się najwspanialszymi notatkami ze społecznością. W widoku zapisywania notaki można zdefiniować aż trzy rodzaje przechywania treści!
+
+<img width="20px" src="../static/icons/private.png">
+Notatka prywatna widoczna tylko dla Ciebie po zalogowaniu.
+
+<img width="20px" src="../static/icons/public.png">
+Notatka publiczna widoczna dla wszystkich użytkowników w sekcji publicznych notatek. Publiczne notatki mogą zawierać niebezpieczne treści. Nigdy nie wyświetlaj notatek autorów, których nie znacz. **Zawsze uważaj na notatki innych użytkowników**
+
+<img width="20px" src="../static/icons/encrypted.png">
+Notatka prywatna (szyfrowana) widoczna tylko dla Ciebie. Wymaga podania specjalnego klucza, który jest niezbędny do ponownego wyświetlania notatki.
+Zapomnienie klucza oznacza utratę notatki. **Nikt inny nie zna Twojego klucza!**

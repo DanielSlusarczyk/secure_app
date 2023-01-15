@@ -2,7 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, ValidationError
 from wtforms.validators import InputRequired, Length
 from source.userManager import UserManager
-import string
 
 user_manager = UserManager()
 
