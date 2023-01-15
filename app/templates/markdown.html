@@ -38,17 +38,15 @@
       {% if form %}
       <form action={{ url_for('save') }} method="POST">
         {{ form.csrf_token }}
-        <div style="text-align:right">
-          <div id="nav">
-            <div id="first">
-              <div>
-                <label id="type_label" for="type">Type:</label>
-                {{ form.type }}
-              </div>
+        <div id="nav">
+          <div id="first">
+            <div>
+              <label id="type_label" for="type">Type:</label>
+              {{ form.type }}
             </div>
-            <div id="second">
-              <input id="add" type="submit" value="Save">
-            </div>
+          </div>
+          <div id="second">
+            <input id="add" type="submit" value="Save">
           </div>
         </div>
       </form>
