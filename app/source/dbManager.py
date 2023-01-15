@@ -1,9 +1,9 @@
-import os, sqlite3
+import os, sqlite3, markdown
 
 class DBManager:
     def __init__(self):
         self.database_path = os.getenv('DATABASE')
-        self.init()
+        self.connect()
 
     def connect(self):
         self.db_connection = sqlite3.connect(self.database_path)
@@ -22,6 +22,7 @@ class DBManager:
         sql_cursor.execute("CREATE TABLE drafts (id INTEGER PRIMARY KEY, markdown TEXT, author TEXT, addDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(author) REFERENCES users(username))")
         sql_cursor.execute("CREATE TABLE logins (id INTEGER PRIMARY KEY, user TEXT, host TEXT, attemp_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
         self.db_connection.commit()
+        self.add_example()
     
     def execute(self, sql, params=()):
         self.insert(sql, params)
@@ -56,3 +57,11 @@ class DBManager:
             result = None
 
         return result
+
+    def add_example(self):
+        USER = "Read_me"
+        PASS = "Majn2a37489"
+        f = open("static/manual", "r")
+        md = markdown.markdown(f.read())
+        self.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', params = (USER, "1", "ZoNJMylSAy@2vaHiOOXnl"))
+        self.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params = (USER, md, 0, 1))

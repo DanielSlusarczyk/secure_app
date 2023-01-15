@@ -10,7 +10,7 @@ class RegisterForm(FlaskForm):
     username = StringField(
             validators=[
                 InputRequired(message="Username should not be empty"), 
-                Length(min=user_manager.min_length, max=user_manager.max_length, message="Username should be at least %(min)d and max %(max)d characters long")], 
+                Length(min=user_manager.min_username, max=user_manager.max_username, message="Username should be at least %(min)d and max %(max)d characters long")], 
             render_kw={"placeholder": "Username", "autofocus": True})
 
     email = EmailField(

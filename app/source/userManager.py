@@ -4,7 +4,7 @@ from wtforms import ValidationError
 from flask_login import UserMixin
 from passlib.hash import bcrypt
 from uuid import uuid4
-import os, string, math
+import os, string, math, time
 
 class User(UserMixin):
     pass
@@ -20,6 +20,11 @@ class UserManager:
         self.uppercase = int(os.getenv('PASSWORD_UPPERS'))
         self.numbers = int(os.getenv('PASSWORD_DIGITS'))
         self.allowed_signs = os.getenv('ALLOWED_SIGNS')
+
+        self.min_username = int(os.getenv('USERNAME_MIN_LENGTH'))
+        self.max_username = int(os.getenv('USERNAME_MAX_LENGTH'))
+
+        self.waiting_time = int(os.getenv('WAITING_TIME_SEC'))
 
         self.password_policy = PasswordPolicy.from_names(
             length = self.min_length,
@@ -46,7 +51,15 @@ class UserManager:
             return False
 
         password += self.pepper
-        return bcrypt.verify(password, user.password)
+
+        start_time = time.time()
+        result = bcrypt.verify(password, user.password)
+        hash_time = time.time() - start_time
+
+        if hash_time < self.waiting_time:
+            time.sleep(self.waiting_time - hash_time)
+
+        return result
 
     def reach_limit(self, user, host):
         try:
@@ -95,7 +108,6 @@ class UserManager:
         
         try:
             logs = self.db_manager.many('SELECT host, DATETIME(MAX(attemp_time), "localtime") AS last_login, COUNT(attemp_time) AS count FROM logins WHERE user = ? GROUP BY host LIMIT 5', params=(username, ))
-            print(logs)
             if logs is None:
                 logs = []
         except:

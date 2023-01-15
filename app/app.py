@@ -8,7 +8,7 @@ from source.userManager import UserManager
 from source.dbManager import DBManager
 from source.noteManager import NoteManager
 from source.models import RegisterForm, LoginForm, LockForm, UnlockForm, MarkdownForm, NoteForm, PasswordRecoveryForm, PasswordRecoveryTokenForm
-import os, markdown
+import os
 
 load_dotenv()
 
@@ -18,23 +18,15 @@ user_manager = UserManager()
 note_manager = NoteManager()
 csrf = CSRFProtect()
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('CSRF_SECRET_KEY')
 
 csrf.init_app(app)
 login_manager.init_app(app)
+db_manager.init()
 limiter = Limiter(get_remote_address, app = app, default_limits = [os.getenv('REQUESTS_LIMIT')], storage_uri="memory://")
-
-def add_example():
-    USER = "Read_me"
-    PASS = "Majn2a37489"
-    user_manager.add(USER, PASS, "")
-    f = open("static/manual", "r")
-    md = markdown.markdown(f.read())
-    db_manager.insert('INSERT INTO notes (owner, note, isEncrypted, isPublic) VALUES (?, ?, ?, ?)', params = (USER, md, 0, 1))
-
-add_example()
 
 @login_manager.user_loader
 def user_loader(username):

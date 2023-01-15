@@ -70,8 +70,8 @@
             <tr>
               <td>{{note.0}}</td>
               <td>
-                <div id="note">
-                  <div id="first">
+                <div class="note">
+                  <div class="first">
                     {% if note.3 == 1 %}
                     <img src="static/icons/encrypted.png">
                     {% endif %}
@@ -84,7 +84,7 @@
                     {% endif %}
                     {% endif %}
                   </div>
-                  <div id="second">
+                  <div class="second">
                     <a class="single_note" href="{{ url_for('show', rendered_id=note.1) }}"> Note</a>
                   </div>
                 </div>

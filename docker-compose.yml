@@ -22,7 +22,7 @@ services:
       context: ./
       dockerfile: Dockerfile_flask
     container_name: flask
-    command: gunicorn --chdir app --bind 0.0.0.0:8000 --workers 4 "wsgi:app"
+    command: gunicorn --chdir app --bind 0.0.0.0:8000 --workers 1 "wsgi:app"
     networks:
       my-network:
         aliases:
