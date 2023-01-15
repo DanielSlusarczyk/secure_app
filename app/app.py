@@ -290,7 +290,7 @@ def show(rendered_id):
 
     abort(404)
 
-@app.errorhandler(404)
+@app.errorhandler(Exception)
 def handle_exception(e):
     return_btn=True
     login_btn=False
