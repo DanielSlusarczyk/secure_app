@@ -22,7 +22,7 @@ class RegisterForm(FlaskForm):
     password=PasswordField(
             validators=[
                 InputRequired(message="Password shoud not be empty"), 
-                Length(min=4, max=20, message="Password should be at least %(min)d and max %(max)d characters long")],
+                Length(min=user_manager.min_length, max=user_manager.max_length, message="Password should be at least %(min)d and max %(max)d characters long")],
             render_kw={"placeholder": "Password"})
 
     submit=SubmitField('Accept')
