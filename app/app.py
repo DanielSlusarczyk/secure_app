@@ -89,7 +89,6 @@ def login():
             username=request.form.get('username')
             password=request.form.get('password')
             host=request.remote_addr
-            print(host)
 
             if user_manager.reach_limit(username, host):
                 return render_template('login.html', form=form, error='Too many attempts! Wait a few minutes.')
